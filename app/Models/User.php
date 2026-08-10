@@ -95,14 +95,14 @@ class User extends Authenticatable implements Auditable, JWTSubject
         return $this->hasOne(Manager::class);
     }
 
-    public function level()
-    {
-        return $this->belongsToMany(Level::class, 'user_levels','user_id','level_id')->withPivot('points');
-    }
-
     public function participants()
     {
         return $this->hasMany(Participant::class);
+    }
+
+    public function level()
+    {
+        return $this->belongsToMany(Level::class, 'user_levels','user_id','level_id')->withPivot('points');
     }
     
     public function achievements()

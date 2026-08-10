@@ -6,14 +6,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Services\UserService;
 use App\Models\User;
 use App\Models\Player;
-use App\Models\PlayerPosition;
 use App\Models\Manager;
 use App\Models\Position;
+use App\Models\PlayerPosition;
 
 class UserController extends Controller
 {
+    /* 
+    * USER - CRIAÇÃO DE USUÁRIO
+    * @param Request: Dados do Usuário, Dados de Modo Jogador e Dados
+    * @return String: Mensagem de Sucesso ou Erro;
+    */
     public function create(Request $request){
         //INICIALIZAR TRANSAÇÃO NO DB
         DB::beginTransaction();
@@ -50,6 +56,23 @@ class UserController extends Controller
             Log::channel('registro')->error("[Erro de Registro][User][Registro]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
             //REDIRECIONAR PARA O FORMULÁRIO COM A MENSAGEM DE ERRO
             return response()->json(['message' => 'Houve um erro ao registrar o Usuário.'], 400);
+        }
+    }
+
+    /* 
+    * USER - EVENTOS DO USUARIO
+    * @param Request: Dados do Usuário, Dados de Modo Jogador e Dados
+    * @return Items: Lista de Eventos do Usuário;
+    */
+    public function events(Request $request){
+        try {
+            $userService = new UserService();
+            $user = auth()->user();
+            $events = $userService->getEvents($user);
+            return response()->json(['events' => $events], 200);
+        } catch (\Exception $e) {
+            Log::channel('register')->error("[Erro ao buscar eventos do usuário]", ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['message' => 'Houve um erro ao buscar os eventos do usuário.'], 500);
         }
     }
 }

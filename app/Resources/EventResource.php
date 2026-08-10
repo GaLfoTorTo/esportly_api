@@ -28,7 +28,7 @@ class EventResource extends JsonResource
             'modality'      => $this->modality,
             'collaborators' => $this->collaborators,
             'photo'         => $this->photo_url,
-            'privacy'       => Privacy::fromBool((bool) $this->privacy)->value,
+            'privacy'       => Privacy::fromBool((bool) $this->privacy),
             'address'       => $this->whenLoaded('address') ? AddressResource::make($this->address) : null,
             'gameConfig'    => $this->whenLoaded('gameConfig') ? GameConfigResource::make($this->gameConfig) : null,
             'avaliations'   => $this->whenLoaded('avaliations') ? AvaliationResource::collection($this->avaliations) : [],

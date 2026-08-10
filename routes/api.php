@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 //CONTROLLERS
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoomController;
@@ -19,15 +20,27 @@ use App\Http\Controllers\GameController;
 |
 */
 
+Route::fallback(function () { return response()->json(['message' => 'Não foi possível encontrar a rota'], 404);});
+
 //CRIAR USUÁRIO
 Route::post('/user/create', [UserController::class, 'create'])->name('create');
 //ROTA DE LOGIN
 Route::post('/login', [AuthController::class, 'login'])->name('login');
-
 //ROTAS AUTENTICADAS (TOKEN JWT)
-Route::middleware('auth:api')->group(function () {
-    Route::get('/home', [HomeController::class, 'home']);
+Route::middleware(['auth:api'])->group(function () {
+    //LOGOUT
     Route::post('/logout', [AuthController::class, 'logout']);
+    //HOME
+    Route::get('/home', [HomeController::class, 'home']);
+    //USER
+    Route::prefix('user')->group(function () {
+        //USUARIO
+        Route::get('/',[UserController::class, 'user']);
+        Route::patch('/',[UserController::class, 'update']);
+        Route::delete('/',[UserController::class, 'delete']);
+        //EVENTOS
+        Route::get('/events',[UserController::class, 'events']);
+    });
 
     // EVENTO
     Route::prefix('events')->group(function () {

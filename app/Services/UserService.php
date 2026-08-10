@@ -17,7 +17,11 @@ use App\Models\Participant;
 
 class UserService
 {
-    //FUNÇÃO DE CRIAÇÃO DE USUARIOS
+    /* 
+    * USER - CRIAÇÃO DE USUARIOS
+    * @param data: Dados do Usuário
+    * @return Items: void;
+    */
     public function create($data){
         //INICIALIZAR TRANSAÇÃO NO DB
         DB::beginTransaction();
@@ -66,7 +70,11 @@ class UserService
         }
     }
 
-    //FUNÇÃO CRIAÇÃO DE VINCULO DE TECNICO
+    /* 
+    * USER - VINCULO DE TECNICO
+    * @param data: Dados de Técnico do Usuário
+    * @return Items: void;
+    */
     public function userManager($request, $user_id){
         //VERIFICAR SE DADOS DE TECNICO EXISTEM
         if(isset($request['team']) && !empty($request['team'])){
@@ -85,7 +93,11 @@ class UserService
         }
     }
 
-    //FUNÇÃO CRIAÇÃO DE VINCULO DE JOGADOR
+    /* 
+    * USER - VINCULO DE JOGADOR
+    * @param data: Dados de Jogador do Usuário
+    * @return Items: void;
+    */
     public function userPlayer($request, $user_id){
         if(isset($request['player']) && !empty($request['player'])){
             //DEFINIR DADOS DE MODALIDADE JOGADOR
@@ -99,5 +111,17 @@ class UserService
             //ADICIONAR INFORMAÇÕES DE JOGADOR DO USUARIO
             Player::create($playerData);
         }
+    }
+
+    /* 
+    * USER - BUSCA DE EVENTOS DO USUARIO
+    * @param data: Dados de eventos
+    * @return Items: Lista de eventos;
+    */
+    public function getEvents(User $user){
+        ///$user->load('participants.event');
+        $user = User::with('participants.event')->find(1);
+        $events = $user->participants()->with('event')->get()->pluck('event');
+        return $events;
     }
 }

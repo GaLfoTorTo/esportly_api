@@ -664,7 +664,7 @@ class EventSeed extends Seeder
 
         //FUNÇÃO DE DEFINIÇÃO DE DATA
         function getDate(){
-            $week = ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
+            $week = ['dom','seg','ter','qua','qui','sex','sab'];
             $faker = Factory::create();
             $count = $faker->numberBetween(0, 6);
             $arr = [];
@@ -688,7 +688,7 @@ class EventSeed extends Seeder
             return null;
         }
 
-        for($i = 1; $i <= 10; $i ++){
+        for($i = 1; $i <= 50; $i ++){
             //GERAR MODALIDADE DO EVENTO
             $modality = $faker->randomElement(['Football','Volleyball','Basketball']);
             //GERAR INDEX DE COORDENADA DO ENDEREÇO

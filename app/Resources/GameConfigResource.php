@@ -17,7 +17,7 @@ class GameConfigResource extends JsonResource
             'duration'      => $this->duration,
             'playersPerTeam'=> $this->players_per_team,
             'points'        => $this->points,
-            'config'        => $this->config ?? [],
+            'config'        => $this->config ?? null,
             'createdAt'     => $this->created_at?->toIso8601String(),
             'updatedAt'     => $this->updated_at?->toIso8601String(),
             'deletedAt'     => $this->deleted_at?->toIso8601String(),

@@ -29,14 +29,14 @@ class AuthController extends Controller
                         break;
                 }
                 //VERIFICAR SE USUARIO FOI RECEBIDO
-                if (empty($user)) throw new \Throwable('Falha ao autenticar: usuário inválido ou não retornado pelas funções de login');
+                if (empty($user)) throw new \Exception('Falha ao autenticar: usuário inválido ou não retornado pelas funções de login');
                 //GERAR TOKEN JWT
                 $token = JWTAuth::fromUser($user);
                 //ADICIONAR TOKEN AOS DADOS DO USUARIO
                 $user = UserResource::make($user);
                 return response()->json(['user' => $user, 'token' => $token], 200);
             }
-        }catch(\Throwable $e) {
+        }catch(\Exception $e) {
             //CAPTURAR ERRO E ENVIAR PARA O LOG
             Log::channel('auth')->error("[Erro de autenticação][Usuario][Auth]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
             //REDIRECIONAR PARA O FORMULÁRIO COM A MENSAGEM DE ERRO
@@ -63,11 +63,11 @@ class AuthController extends Controller
             }
             //VERIFICAR SE CREDENCIAIS DO USUARIO SÃO VALIDAS
             if (!JWTAuth::attempt($credentials)) {
-                throw new \Throwable('E-mail/Usuario ou senha estão incorretos');
+                throw new \Exception('E-mail/Usuario ou senha estão incorretos');
             }
             //RETORNAR USUARIO AUTENTICADO
             return $user;
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
             throw $th;
         }
     }
@@ -91,7 +91,7 @@ class AuthController extends Controller
                     'token' => substr($token, 0, 50) . '...',
                     'client_id' => config('services.google.client_id')
                 ]);
-                throw new \Throwable('Token Invalido');
+                throw new \Exception('Token Invalido');
             }
             //BUSCAR USUARIO 
             $user = User::with('player','manager','config','level','participants','achievements')->where('email', $payload['email'])->first();
@@ -100,7 +100,7 @@ class AuthController extends Controller
                 $user = $userService->create($payload);
             }
             return $user;
-        } catch (\Throwable $th) {
+        } catch (\Exception $th) {
             throw $th;
         }
     }
@@ -118,11 +118,56 @@ class AuthController extends Controller
                 //RETORNAR MENSAGEM DE LOGOUT
                 return response()->json(['message' => 'Houve um erro ao efetura logout. Usuario não especificado!'], 500);
             }
-        }catch(\Throwable $e) {
+        }catch(\Exception $e) {
             //CAPTURAR ERRO E ENVIAR PARA O LOG
             Log::channel('auth')->error("[Erro de Logout][Usuario][Auth]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
             //REDIRECIONAR PARA O FORMULÁRIO COM A MENSAGEM DE ERRO
             return response()->json(['message' => 'Houve um erro ao efetura logout. Tente novamente mais tarde!'], 500);
+        }
+    }
+
+    //FUNÇÃO DE RENOVAÇÃO TOKEN JWT
+    public function refresh(Request $request)
+    {
+        try {
+            // Tenta renovar o token atual
+            $newToken = JWTAuth::parseToken()->refresh();
+
+            return response()->json([
+                'token' => $newToken
+            ], 200);
+
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return response()->json(['message' => 'Token expirado, faça login novamente.'], 401);
+
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return response()->json(['message' => 'Token inválido.'], 401);
+
+        } catch (\Exception $e) {
+            Log::channel('auth')->error("[Erro ao renovar token]", [
+                '[message]' => $e->getMessage()
+            ]);
+            return response()->json(['message' => 'Não foi possível renovar o token.'], 500);
+        }
+    }
+
+    //FUNÇÃO DE VERIFICAÇÃO DE TOKEN
+    public function me(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if (!$user) {
+                return response()->json(['message' => 'Usuário não encontrado.'], 404);
+            }
+
+            return response()->json(['user' => UserResource::make($user)], 200);
+
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+            return response()->json(['message' => 'Token expirado.'], 401);
+
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+            return response()->json(['message' => 'Token inválido.'], 401);
         }
     }
 }

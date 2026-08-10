@@ -46,7 +46,7 @@ class Event extends Model implements Auditable
     ];
 
     protected $casts = [
-        'date'         => 'array',
+        'date' => 'array',
         'collaborators' => 'boolean',
         'created_at'   => 'datetime',
         'updated_at'   => 'datetime',

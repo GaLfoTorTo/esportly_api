@@ -21,7 +21,6 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        \Log::info($this->level);
         return [
             'id'           => $this->id,
             'uuid'         => $this->uuid,
