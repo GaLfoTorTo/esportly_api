@@ -8,15 +8,15 @@ use App\Services\HomeService;
 
 class HomeController extends Controller
 {
-    /* 
+    /** 
     * EVENTOS - RECOMENDADOS
+    *
+    * @param Request: Array multidimensional com parametros de filtragem;
     * @return Array || []: Array Multidimencional com dados para home page;
     */
     public function home(Request $request){
         try {
-            //INSTANCIAR SERVIÇO DE HOME
             $homeService = new HomeService();
-            //ARRAY DE COLETA DE EVENTOS
             $resp = [
                 "toYou" => [
                     "title" =>  "Para você",

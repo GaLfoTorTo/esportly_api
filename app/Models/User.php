@@ -12,7 +12,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use OwenIt\Auditing\Contracts\Auditable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 use App\Models\Achievement;
 use App\Models\Player;
 use App\Models\Manager;
@@ -20,7 +19,7 @@ use App\Models\Level;
 use App\Models\Participant;
 use App\Models\UserConfig;
 
-class User extends Authenticatable implements Auditable, JWTSubject
+class User extends Authenticatable implements Auditable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
     use \OwenIt\Auditing\Auditable;
@@ -108,17 +107,5 @@ class User extends Authenticatable implements Auditable, JWTSubject
     public function achievements()
     {
         return $this->beLongsTo(Achievement::class, 'user_achievements', 'user_id', 'achievement_id');
-    }
-
-    // ─── Token Methods ────────────────────────────────────────────────────────
-
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-
-    public function getJWTCustomClaims()
-    {
-        return [];
     }
 }

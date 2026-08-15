@@ -15,17 +15,15 @@ use App\Models\PlayerPosition;
 
 class UserController extends Controller
 {
-    /* 
+    /** 
     * USER - CRIAÇÃO DE USUÁRIO
+    *
     * @param Request: Dados do Usuário, Dados de Modo Jogador e Dados
     * @return String: Mensagem de Sucesso ou Erro;
     */
     public function create(Request $request){
-        //INICIALIZAR TRANSAÇÃO NO DB
         DB::beginTransaction();
-        //TENTAR SALVAR O USUÁRIO
         try {
-            //VERIFICAR SE DADOS RECEBIDOS NÃO ESTÃO VAZIOS
             if(!empty($request->all())){
                 //DEFINIR DADOS BASICOS DO USUARIO
                 $data = [
@@ -39,30 +37,25 @@ class UserController extends Controller
                     'phone'=> !empty($request['phone']) ? removeCharEspeciais($request['phone']) : null,
                     'visibility'=> $request['visibility'],
                 ];
-                //RESGATAR DADOS DE MODO JOGADOR
                 $player = $request['player'];
-                //RESGATAR DADOS DE MODO TECNICO
                 $manager = $request['manager'];
-                //REGISTRAR USUARIO
                 $user = User::create($data);
-                //CONSOLIDAR OPERAÇÃO
                 DB::commit();
                 return response()->json(['message' => 'Usuário registrado com sucesso!'], 200);
             }else{
                 return response()->json(['message' => 'Os dados do usuário estão vazios!'], 400);
             }
         }catch(\Exception $e) {
-            //CAPTURAR ERRO E ENVIAR PARA O LOG
             Log::channel('registro')->error("[Erro de Registro][User][Registro]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
-            //REDIRECIONAR PARA O FORMULÁRIO COM A MENSAGEM DE ERRO
             return response()->json(['message' => 'Houve um erro ao registrar o Usuário.'], 400);
         }
     }
 
-    /* 
+    /**
     * USER - EVENTOS DO USUARIO
+    *
     * @param Request: Dados do Usuário, Dados de Modo Jogador e Dados
-    * @return Items: Lista de Eventos do Usuário;
+    * @return EventResource || []: Collection App\Models\Event
     */
     public function events(Request $request){
         try {

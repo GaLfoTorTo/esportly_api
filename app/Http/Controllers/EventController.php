@@ -13,29 +13,35 @@ use App\Models\Participant;
 
 class EventController extends Controller
 {
-    /* 
+    private $registerService;
+
+    public function __construct(){
+        $this->registerService = new EventService();
+    }
+
+    /**
     * EVENTOS - LISTA DE EVENTOS DO USUÁRIO
+    *
     * @param Request: ID do Usuário;
-    * @return EventResource || []: Array de eventos recomendados;
+    * @return EventResource || []: Collection App\Models\Event
     */
     public function userEvents(Request $request){
         $id = $request->input("user_id");
-        $eventService = new EventService();
-        $event = $eventService->find($id);
+        $event = $this->registerService->get($id);
         return response()->json(['event' => $event], 200);
     }
 
-    /* 
+    /**
     * EVENTOS - BUSCAR EVENTOS
-    * @param Request: Dados do Evento e Participantes;
-    * @return String: Mensagem de Sucesso ou Erro;
+    *
+    * @param Request: ID do Usuário;
+    * @return EventResource || []: Collection App\Models\Event
     */
-    public function events(){
+    public function events(Request $request){
         try {
-            //INICIALIZAR SERVIÇO DE EVENTOS E CRIAR NOVO EVENTO
-            $eventService = new EventService();
-            $event = $eventService->create($request);
-            return response()->json(['evento' => $event], 201);
+            //BUSCAR EVENTOS
+            $event = $this->registerService->get();
+            return response()->json(['events' => $events], 201);
         }catch(\Exception $e) {
             //CAPTURAR ERRO E ENVIAR PARA O LOG
             Log::channel('registro')->error("[Erro de Registro][User][Registro]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
@@ -44,16 +50,16 @@ class EventController extends Controller
         }
     }
 
-    /* 
+    /**
     * EVENTOS - CRIAÇÃO DE EVENTOS
+    *
     * @param Request: Dados do Evento e Participantes;
     * @return String: Mensagem de Sucesso ou Erro;
     */
     public function create(Request $request){
         try {
             //INICIALIZAR SERVIÇO DE EVENTOS E CRIAR NOVO EVENTO
-            $eventService = new EventService();
-            $event = $eventService->create($request);
+            $event = $this->registerService->create($request->all());
             return response()->json(['evento' => $event], 201);
         }catch(\Exception $e) {
             //CAPTURAR ERRO E ENVIAR PARA O LOG
