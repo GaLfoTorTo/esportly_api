@@ -1,0 +1,192 @@
+name: E-sportly — CI/CD
+
+on:
+  push:
+    branches:
+      - dev
+      - homologacao
+      - main
+
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: false
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  SECRETS NECESSÁRIOS (Settings → Secrets and variables → Actions):
+#  ENV_HOST  / ENV_USER  / ENV_KEY - Ambientes DEV/HMG/TRE/PREPROD
+#  PROD_HOST / PROD_USER / PROD_KEY - Ambiente PROD
+#
+#  ENVIRONMENTS (Settings → Environments):
+#  Crie um environment chamado "PROD" e configure Required Reviewers
+#  para exigir aprovação manual antes do deploy em produção.
+# ─────────────────────────────────────────────────────────────────────────────
+
+jobs:
+
+  # ─────────────────────────────────────────────
+  #  RESOLVER VARIAVEIS DE AMBIENTE PELA BRANCH
+  # ─────────────────────────────────────────────
+  resolve-env:
+    name: Resolver ambiente (${{ github.ref_name }})
+    runs-on: ubuntu-latest
+    outputs:
+      env_name:    ${{ steps.map.outputs.env_name }}
+      host_secret: ${{ steps.map.outputs.host_secret }}
+      user_secret: ${{ steps.map.outputs.user_secret }}
+      key_secret:  ${{ steps.map.outputs.key_secret }}
+      app_path:    ${{ steps.map.outputs.app_path }}
+      branch:      ${{ github.ref_name }}
+
+    steps:
+      - name: Mapear branch → ambiente
+        id: map
+        run: |
+          case "${{ github.ref_name }}" in
+            dev)
+              echo "env_name=DEV"                                             >> $GITHUB_OUTPUT
+              echo "host_secret=ENV_HOST"                                     >> $GITHUB_OUTPUT
+              echo "user_secret=ENV_USER"                                     >> $GITHUB_OUTPUT
+              echo "key_secret=ENV_KEY"                                       >> $GITHUB_OUTPUT
+              echo "app_path=/www/wwwroot/dev.esportly.com/harpia"          >> $GITHUB_OUTPUT
+              ;;
+            homologacao)
+              echo "env_name=HMG"                                             >> $GITHUB_OUTPUT
+              echo "host_secret=ENV_HOST"                                     >> $GITHUB_OUTPUT
+              echo "user_secret=ENV_USER"                                     >> $GITHUB_OUTPUT
+              echo "key_secret=ENV_KEY"                                       >> $GITHUB_OUTPUT
+              echo "app_path=/www/wwwroot/hmg.esportly.com/harpia"          >> $GITHUB_OUTPUT
+              ;;
+            prod)
+              echo "env_name=PROD"                                            >> $GITHUB_OUTPUT
+              echo "host_secret=PROD_HOST"                                    >> $GITHUB_OUTPUT
+              echo "user_secret=PROD_USER"                                    >> $GITHUB_OUTPUT
+              echo "key_secret=PROD_KEY"                                      >> $GITHUB_OUTPUT
+              echo "app_path=/www/wwwroot/prod.esportly.com/harpia"         >> $GITHUB_OUTPUT
+              ;;
+          esac
+
+  # ─────────────────────────────────────────────
+  #  DEPLOY EM SERVIDOR VIA SSH (conexão única)
+  # ─────────────────────────────────────────────
+  deploy:
+    name: Deploy → ${{ needs.resolve-env.outputs.env_name }}
+    runs-on: ubuntu-latest
+    needs: resolve-env
+    environment: ${{ needs.resolve-env.outputs.env_name }}
+
+    steps:
+      - name: "🚀 Iniciando deploy ${{ needs.resolve-env.outputs.env_name }}"
+        run: |
+          echo "Branch  : ${{ needs.resolve-env.outputs.branch }}"
+          echo "Ambiente: ${{ needs.resolve-env.outputs.env_name }}"
+          echo "Pasta   : ${{ needs.resolve-env.outputs.app_path }}"
+
+      # ── DEPLOY COMPLETO EM UMA ÚNICA CONEXÃO SSH ──────────────────────────
+      - name: "Deploy completo"
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host:     ${{ secrets[needs.resolve-env.outputs.host_secret] }}
+          username: ${{ secrets[needs.resolve-env.outputs.user_secret] }}
+          key:      ${{ secrets[needs.resolve-env.outputs.key_secret] }}
+          port:     22
+          command_timeout: 30m
+          script: |
+            set -e
+            APP_PATH="${{ needs.resolve-env.outputs.app_path }}"
+            BRANCH="${{ needs.resolve-env.outputs.branch }}"
+
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "  🚀 E-SPORTLY — DEPLOY ${{ needs.resolve-env.outputs.env_name }}"
+            echo "  Branch : $BRANCH"
+            echo "  Pasta  : $APP_PATH"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+            cd "$APP_PATH"
+
+            # ── 1. MODO MANUTENÇÃO ──────────────────────────────────────────
+            echo ""
+            echo "▶ [1/9] Ativando modo manutenção..."
+            php artisan down --refresh=15 --retry=10 || true
+
+            # ── 2. PULL DA BRANCH ───────────────────────────────────────────
+            echo ""
+            echo "▶ [2/9] Atualizando código ($BRANCH)..."
+            git fetch origin
+            git reset --hard origin/$BRANCH
+            git pull origin $BRANCH
+
+            # ── 3. DEPENDÊNCIAS PHP ─────────────────────────────────────────
+            echo ""
+            echo "▶ [3/9] Instalando dependências PHP (composer)..."
+            composer install \
+              --no-dev \
+              --no-interaction \
+              --no-scripts \
+              --no-progress \
+              --optimize-autoloader \
+              --prefer-dist
+
+            # ── 4. DEPENDÊNCIAS NODE ────────────────────────────────────────
+            echo ""
+            echo "▶ [4/9] Instalando dependências Node.js (npm)..."
+            npm install
+
+            # ── 5. LIMPAR CACHE ─────────────────────────────────────────────
+            echo ""
+            echo "▶ [5/9] Limpando caches Laravel..."
+            php artisan clear-compiled
+            php artisan cache:clear
+            php artisan config:clear
+            php artisan route:clear
+            php artisan view:clear
+            php artisan event:clear
+
+            # ── 6. MIGRATIONS ───────────────────────────────────────────────
+            echo ""
+            echo "▶ [6/9] Verificando migrations pendentes..."
+            PENDING=$(php artisan migrate:status --no-ansi 2>/dev/null | grep -c "Pending" || true)
+            if [ "$PENDING" -gt "0" ]; then
+              echo "  🗄️  $PENDING migration(s) encontrada(s) — executando..."
+              php artisan migrate --force
+            else
+              echo "  ✅ Nenhuma migration pendente."
+            fi
+
+            # ── 7. REINICIAR FILAS ──────────────────────────────────────────
+            echo ""
+            echo "▶ [7/9] Reiniciando workers de fila (Supervisor)..."
+            php artisan queue:restart
+            php artisan reverb:restart
+            sudo supervisorctl restart laravel-worker:* || true
+
+            # ── 8. BUILD DA APLICAÇÃO ───────────────────────────────────────
+            echo ""
+            echo "▶ [8/9] Buildando aplicação (npm run build)..."
+            npm run build
+
+            # ── 9. RECRIAR CACHE E SUBIR APLICAÇÃO ─────────────────────────
+            echo ""
+            echo "▶ [9/9] Recriando caches e subindo aplicação..."
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan up
+
+            echo ""
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "  ✅ DEPLOY FINALIZADO COM SUCESSO!"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      # ── FALLBACK: garante que a app volta ao ar se algo falhar ────────────
+      - name: "❌ Restaurar aplicação em caso de falha"
+        if: failure()
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host:     ${{ secrets[needs.resolve-env.outputs.host_secret] }}
+          username: ${{ secrets[needs.resolve-env.outputs.user_secret] }}
+          key:      ${{ secrets[needs.resolve-env.outputs.key_secret] }}
+          port:     22
+          script: |
+            cd ${{ needs.resolve-env.outputs.app_path }} && php artisan up || true
+            echo "⚠️  Deploy falhou! A aplicação foi restaurada ao ar."
