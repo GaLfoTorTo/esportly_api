@@ -45,14 +45,14 @@ jobs:
               echo "host_secret=PROD_HOST"                                    >> $GITHUB_OUTPUT
               echo "user_secret=PROD_USER"                                    >> $GITHUB_OUTPUT
               echo "key_secret=PROD_KEY"                                      >> $GITHUB_OUTPUT
-              echo "app_path=/www/wwwroot/hmg.esportly_api.com/"                  >> $GITHUB_OUTPUT
+              echo "app_path=/www/wwwroot/hmg.esportly.com/"                  >> $GITHUB_OUTPUT
               ;;
             main)
               echo "env_name=PROD"                                            >> $GITHUB_OUTPUT
               echo "host_secret=PROD_HOST"                                    >> $GITHUB_OUTPUT
               echo "user_secret=PROD_USER"                                    >> $GITHUB_OUTPUT
               echo "key_secret=PROD_KEY"                                      >> $GITHUB_OUTPUT
-              echo "app_path=/www/wwwroot/esportly_api.com/"                      >> $GITHUB_OUTPUT
+              echo "app_path=/www/wwwroot/esportly.com/"                      >> $GITHUB_OUTPUT
               ;;
           esac
 
