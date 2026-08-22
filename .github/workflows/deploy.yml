@@ -107,19 +107,18 @@ jobs:
             git reset --hard origin/$BRANCH
             git pull origin $BRANCH
 
-            # ── 3. LIMPAR CACHE ─────────────────────────────────────────────
+            # ── 3. LIMPAR CACHE COMPILADO (sem bootar o Laravel) ────────────
             echo ""
-            echo "▶ [5/9] Limpando caches Laravel..."
-            php artisan clear-compiled || true
-            php artisan cache:clear
-            php artisan config:clear
-            php artisan route:clear
-            php artisan view:clear
-            php artisan event:clear
+            echo "▶ [3/9] Removendo cache compilado..."
+            rm -f bootstrap/cache/compiled.php
+            rm -f bootstrap/cache/services.php
+            rm -f bootstrap/cache/config.php
+            rm -f bootstrap/cache/routes*.php
+            rm -f bootstrap/cache/events.php
 
             # ── 4. DEPENDÊNCIAS PHP ─────────────────────────────────────────
             echo ""
-            echo "▶ [3/9] Instalando dependências PHP (composer)..."
+            echo "▶ [4/9] Instalando dependências PHP (composer)..."
             composer install \
               --no-dev \
               --no-interaction \
@@ -130,12 +129,21 @@ jobs:
 
             # ── 5. DEPENDÊNCIAS NODE ────────────────────────────────────────
             echo ""
-            echo "▶ [4/9] Instalando dependências Node.js (npm)..."
+            echo "▶ [5/9] Instalando dependências Node.js (npm)..."
             npm install
 
-            # ── 6. MIGRATIONS ───────────────────────────────────────────────
+            # ── 6. LIMPAR CACHE LARAVEL ─────────────────────────────────────
             echo ""
-            echo "▶ [6/9] Verificando migrations pendentes..."
+            echo "▶ [6/9] Limpando caches Laravel..."
+            php artisan cache:clear
+            php artisan config:clear
+            php artisan route:clear
+            php artisan view:clear
+            php artisan event:clear
+
+            # ── 7. MIGRATIONS ───────────────────────────────────────────────
+            echo ""
+            echo "▶ [7/9] Verificando migrations pendentes..."
             PENDING=$(php artisan migrate:status --no-ansi 2>/dev/null | grep -c "Pending" || true)
             if [ "$PENDING" -gt "0" ]; then
               echo "  🗄️  $PENDING migration(s) encontrada(s) — executando..."
@@ -144,21 +152,21 @@ jobs:
               echo "  ✅ Nenhuma migration pendente."
             fi
 
-            # ── 7. REINICIAR FILAS ──────────────────────────────────────────
+            # ── 8. REINICIAR FILAS ──────────────────────────────────────────
             echo ""
-            echo "▶ [7/9] Reiniciando workers de fila (Supervisor)..."
+            echo "▶ [8/9] Reiniciando workers de fila (Supervisor)..."
             php artisan queue:restart
             php artisan reverb:restart
             sudo supervisorctl restart laravel-worker:* || true
 
-            # ── 8. BUILD DA APLICAÇÃO ───────────────────────────────────────
+            # ── 9. BUILD DA APLICAÇÃO ───────────────────────────────────────
             echo ""
-            echo "▶ [8/9] Buildando aplicação (npm run build)..."
+            echo "▶ [9/9] Buildando aplicação (npm run build)..."
             npm run build
 
-            # ── 9. RECRIAR CACHE E SUBIR APLICAÇÃO ─────────────────────────
+            # ── 10. RECRIAR CACHE E SUBIR APLICAÇÃO ────────────────────────
             echo ""
-            echo "▶ [9/9] Recriando caches e subindo aplicação..."
+            echo "▶ [10/10] Recriando caches e subindo aplicação..."
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
