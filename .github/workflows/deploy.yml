@@ -111,6 +111,7 @@ jobs:
             echo ""
             echo "▶ [3/9] Removendo cache compilado..."
             rm -f bootstrap/cache/compiled.php
+            rm -f bootstrap/cache/packages.php
             rm -f bootstrap/cache/services.php
             rm -f bootstrap/cache/config.php
             rm -f bootstrap/cache/routes*.php
