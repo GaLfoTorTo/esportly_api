@@ -9,7 +9,7 @@ import NetworkSection   from './Sections/NetworkSection.vue';
 import ModalitySection  from './Sections/ModalitySection.vue';
 import DownloadSection  from './Sections/DownloadSection.vue';
 import FooterSection    from './Sections/FooterSection.vue';
-import { useCurrentSport } from '@/composables/useCurrentSport';
+import { useCurrentSport } from '@/Composables/useCurrentSport';
 
 gsap.registerPlugin(ScrollTrigger);
 
