@@ -107,7 +107,17 @@ jobs:
             git reset --hard origin/$BRANCH
             git pull origin $BRANCH
 
-            # ── 3. DEPENDÊNCIAS PHP ─────────────────────────────────────────
+            # ── 3. LIMPAR CACHE ─────────────────────────────────────────────
+            echo ""
+            echo "▶ [5/9] Limpando caches Laravel..."
+            php artisan clear-compiled || true
+            php artisan cache:clear
+            php artisan config:clear
+            php artisan route:clear
+            php artisan view:clear
+            php artisan event:clear
+
+            # ── 4. DEPENDÊNCIAS PHP ─────────────────────────────────────────
             echo ""
             echo "▶ [3/9] Instalando dependências PHP (composer)..."
             composer install \
@@ -118,20 +128,10 @@ jobs:
               --optimize-autoloader \
               --prefer-dist
 
-            # ── 4. DEPENDÊNCIAS NODE ────────────────────────────────────────
+            # ── 5. DEPENDÊNCIAS NODE ────────────────────────────────────────
             echo ""
             echo "▶ [4/9] Instalando dependências Node.js (npm)..."
             npm install
-
-            # ── 5. LIMPAR CACHE ─────────────────────────────────────────────
-            echo ""
-            echo "▶ [5/9] Limpando caches Laravel..."
-            php artisan clear-compiled
-            php artisan cache:clear
-            php artisan config:clear
-            php artisan route:clear
-            php artisan view:clear
-            php artisan event:clear
 
             # ── 6. MIGRATIONS ───────────────────────────────────────────────
             echo ""
