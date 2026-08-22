@@ -83,6 +83,10 @@ jobs:
           command_timeout: 30m
           script: |
             set -e
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use 24
+
             APP_PATH="${{ needs.resolve-env.outputs.app_path }}"
             BRANCH="${{ needs.resolve-env.outputs.branch }}"
 
@@ -159,7 +163,7 @@ jobs:
             echo "▶ [8/9] Reiniciando workers de fila (Supervisor)..."
             php artisan queue:restart
             php artisan reverb:restart
-            sudo supervisorctl restart events_reverb:* || true
+            sudo /www/server/panel/pyenv/bin/supervisorctl restart events_reverb:* || true
 
             # ── 9. BUILD DA APLICAÇÃO ───────────────────────────────────────
             echo ""
