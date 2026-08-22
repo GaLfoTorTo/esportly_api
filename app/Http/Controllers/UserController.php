@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Services\UserService;
+use App\Services\EventService;
 use App\Models\User;
 use App\Models\Player;
 use App\Models\Manager;
@@ -25,21 +26,8 @@ class UserController extends Controller
         DB::beginTransaction();
         try {
             if(!empty($request->all())){
-                //DEFINIR DADOS BASICOS DO USUARIO
-                $data = [
-                    'uuid' => (string) Str::uuid(),
-                    'first_name'=> $request['firstName'],
-                    'last_name'=> $request['lastName'],
-                    'user_name'=> $request['userName'],
-                    'email'=> $request['email'],
-                    'password'=> bcrypt($request['password']),
-                    'born_date'=> !empty($request['bornDate']) ? date('Y-m-d', strtotime($request['bornDate'])) : null,
-                    'phone'=> !empty($request['phone']) ? removeCharEspeciais($request['phone']) : null,
-                    'visibility'=> $request['visibility'],
-                ];
-                $player = $request['player'];
-                $manager = $request['manager'];
-                $user = User::create($data);
+                $userService = new UserSerivce();
+                $userService->create($request->all());
                 DB::commit();
                 return response()->json(['message' => 'Usuário registrado com sucesso!'], 200);
             }else{
@@ -59,9 +47,9 @@ class UserController extends Controller
     */
     public function events(Request $request){
         try {
-            $userService = new UserService();
+            $eventService = new EventService();
             $user = auth()->user();
-            $events = $userService->getEvents($user);
+            $events = $eventService->get($user->id);
             return response()->json(['events' => $events], 200);
         } catch (\Exception $e) {
             Log::channel('register')->error("[Erro ao buscar eventos do usuário]", ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);

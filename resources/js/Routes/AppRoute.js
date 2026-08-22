@@ -12,8 +12,8 @@ const resolverPage = (name) => {
 }
 
 const routes = [
-   { 
-      path: '/landing', 
+   {
+      path: '/',
       name: 'landing',
       component: resolverPage('Landing/Index'),
    }

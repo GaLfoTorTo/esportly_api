@@ -47,6 +47,6 @@ class Player extends Model implements Auditable
 
     public function ratings()
     {
-        return $this->hasMany(Rating::class);
+        return $this->hasMany(Rating::class, 'user_id', 'user_id');
     }
 }

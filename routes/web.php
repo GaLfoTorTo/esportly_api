@@ -1,20 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Models\Atuacao;
-use App\Models\Equipe;
-use App\Models\Escalacao;
-use App\Models\Jogador;
-use App\Models\Noticia;
-use App\Models\Participante;
-use App\Models\Partida;
-use App\Models\Pelada;
-use App\Models\Pontuacao;
-use App\Models\Posicao;
-use App\Models\Regra;
-use App\Models\Resultado;
-use App\Models\Tecnico;
-use App\Models\Usuario;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,12 +13,7 @@ use App\Models\Usuario;
 |
 */
 
-//LANDING PAGE ROUTE
-Route::get('/', function () {
-    return view('landing');
-});
-
-//APPLICATION ROUTES
-Route::get('/{any}', function () {
+//APPLICATION ROUTES (Vue SPA handles all routing, including landing at /)
+Route::get('/{any?}', function () {
     return view('app');
 })->where('any', '.*');

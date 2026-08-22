@@ -11,7 +11,7 @@ class RatingResource extends JsonResource
     {
         return [
             'id'        => $this->id,
-            'playerId'  => $this->player_id,
+            'userId'    => $this->user_id,
             'eventId'   => $this->event_id,
             'userId'    => $this->user_id,
             'role'      => $this->role,

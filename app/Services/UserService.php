@@ -17,18 +17,17 @@ use App\Models\Participant;
 
 class UserService
 {
-    /* 
+    /**
     * USER - CRIAÇÃO DE USUARIOS
-    * @param data: Dados do Usuário
-    * @return Items: void;
+    * @param FormData: Dados do Usuário
+    * @return App\Models\User: Objeto de usuario;
     */
     public function create($data){
         //INICIALIZAR TRANSAÇÃO NO DB
         DB::beginTransaction();
         try {
-            //$uploadService = new UploadService(User::class);
             //DEFINIR DADOS BASICOS DO USUARIO
-            $dataForm = [
+            $formData = [
                 'uuid' => (string) Str::uuid(),
                 'first_name'=> ucfirst($data['first_name'] ?? $data['given_name'] ?? explode(" ", $data['name'])[0]),
                 'last_name'=> ucfirst($data['last_name'] ?? $data['family_name'] ?? explode(" ", $data['name'])[1]),
@@ -43,7 +42,7 @@ class UserService
             //UPLOAD DE ARQUIVOS
             //$formData['photo'] = $uploadService->init($data, 'photo');
             //REGISTRAR USUARIO
-            $user = User::create($dataForm);
+            $user = User::create($formData);
             //CRIAR LEVEL
             UserLevel::create([
                 'user_id' => $user->id,
@@ -61,19 +60,64 @@ class UserService
             }
             //CONSOLIDAR OPERAÇÃO
             DB::commit();
+            return $user;
         } catch (\Exception $e) {
             //RETROCEDER 
             DB::rollback();
             //CAPTURAR ERRO E ENVIAR PARA O LOG
-            Log::channel('auth')->error("[Erro ao criar o usuario][Auth]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
+            Log::channel('auth')->error("[Erro ao criar o usuario][Usuario]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
+            throw $e;
+        }
+    }
+    
+    /**
+    * USER - ATUALIZAÇÃO DE USUARIOS
+    * @param FormData: Dados do Usuário
+    * @return App\Models\User: Objeto de usuario;
+    */
+    public function update($data){
+        //INICIALIZAR TRANSAÇÃO NO DB
+        DB::beginTransaction();
+        try {
+            //DEFINIR DADOS BASICOS DO USUARIO
+            $formData = [
+                'first_name'=> ucfirst($data['first_name'] ?? $data['given_name'] ?? explode(" ", $data['name'])[0]),
+                'last_name'=> ucfirst($data['last_name'] ?? $data['family_name'] ?? explode(" ", $data['name'])[1]),
+                'born_date'=> $data['born_date'] ?? null,
+                'phone'=> $data['phone'] ?? null,
+                "photo" => $data['photo'] ?? $data['picture'] ?? null,
+                'privacy'=> $data['privacy'] ?? true,
+            ];
+            //UPLOAD DE ARQUIVOS
+            //$formData['photo'] = $uploadService->init($data, 'photo');
+            //REGISTRAR USUARIO
+            $user = User::find($data['id']);
+            $user->update($formData);
+            //CRIAR CONFIG
+            if(!empty($data['config'])){
+            }
+            //CRIAR VINCULO DE PALYER
+            if(!empty($data['player'])){
+            }
+            //CRIAR VINCULO DE MANAGER
+            if(!empty($data['manager'])){
+            }
+            //CONSOLIDAR OPERAÇÃO
+            DB::commit();
+            return $user;
+        } catch (\Exception $e) {
+            //RETROCEDER 
+            DB::rollback();
+            //CAPTURAR ERRO E ENVIAR PARA O LOG
+            Log::channel('auth')->error("[Erro ao atualizar o usuario][Usuario]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
             throw $e;
         }
     }
 
-    /* 
+    /**
     * USER - VINCULO DE TECNICO
-    * @param data: Dados de Técnico do Usuário
-    * @return Items: void;
+    * @param FormData: Dados de Técnico do Usuário
+    * @return void;
     */
     public function userManager($request, $user_id){
         //VERIFICAR SE DADOS DE TECNICO EXISTEM
@@ -93,10 +137,10 @@ class UserService
         }
     }
 
-    /* 
+    /**
     * USER - VINCULO DE JOGADOR
-    * @param data: Dados de Jogador do Usuário
-    * @return Items: void;
+    * @param FormData: Dados de Jogador do Usuário
+    * @return void;
     */
     public function userPlayer($request, $user_id){
         if(isset($request['player']) && !empty($request['player'])){
@@ -111,17 +155,5 @@ class UserService
             //ADICIONAR INFORMAÇÕES DE JOGADOR DO USUARIO
             Player::create($playerData);
         }
-    }
-
-    /* 
-    * USER - BUSCA DE EVENTOS DO USUARIO
-    * @param data: Dados de eventos
-    * @return Items: Lista de eventos;
-    */
-    public function getEvents(User $user){
-        ///$user->load('participants.event');
-        $user = User::with('participants.event')->find(1);
-        $events = $user->participants()->with('event')->get()->pluck('event');
-        return $events;
     }
 }

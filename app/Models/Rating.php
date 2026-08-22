@@ -16,7 +16,6 @@ class Rating extends Model implements Auditable
 
     protected $table = 'ratings';
     protected $fillable = [
-        'player_id',
         'event_id',
         'user_id',
         'role',
@@ -27,7 +26,6 @@ class Rating extends Model implements Auditable
         'games',
     ];
     protected $auditInclude = [
-        'player_id',
         'event_id',
         'user_id',
         'role',
@@ -50,11 +48,6 @@ class Rating extends Model implements Auditable
     ];
 
     // ─── Relationships ────────────────────────────────────────────────────────
-
-    public function player()
-    {
-        return $this->belongsTo(Player::class);
-    }
 
     public function event()
     {

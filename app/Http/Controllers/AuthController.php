@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Google\Client as GoogleClient;
 use App\Resources\UserResource;
 use App\Services\UserService;
@@ -51,14 +52,12 @@ class AuthController extends Controller
         try {
             $credentials = $request->only('user', 'password');
             $user = null;
-            if (filter_var($credentials['user'], FILTER_VALIDATE_EMAIL)) {
-                $credentials = ['email' => $credentials['user'], 'password' => $credentials['password']]; 
-                $user = User::with('player','manager')->where('email', $credentials['email'])->first();
-            } else {
-                $credentials = ['user_name' => $credentials['user'], 'password' => $credentials['password']];
-                $user = User::with('player','manager','config','level', 'participants','achievements')->where('user_name', $credentials['user_name'])->first();
-            }
-            if (!Auth::attempt($credentials)) {
+            $relations = ['player','manager','config','level', 'participants','achievements'];
+            $user = User::with($relations)
+                        ->where('email', $credentials['user'])
+                        ->orWhere('user_name', $credentials['user'])
+                        ->first();
+            if (empty($user) || !Hash::check($credentials['password'], $user->password)) {
                 throw new \Exception('E-mail/Usuario ou senha estão incorretos');
             }
             return $user;

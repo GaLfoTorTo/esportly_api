@@ -27,8 +27,8 @@ class EventController extends Controller
     */
     public function userEvents(Request $request){
         $id = $request->input("user_id");
-        $event = $this->registerService->get($id);
-        return response()->json(['event' => $event], 200);
+        $events = $this->registerService->get($id);
+        return response()->json(['events' => $events], 200);
     }
 
     /**

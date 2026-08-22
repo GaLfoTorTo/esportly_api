@@ -14,10 +14,10 @@ use App\Resources\EventResource;
 
 class EventService
 {
-    /* 
+    /**
     * EVENTO - BUSCAR EVENTO
-    * @param Request: Dados do Evento e Participantes;
-    * @return EventResource || []: Array de eventos recomendados;
+    * @param int: Id do evento
+    * @return EventResource - App\Models\Event: Evento ;
     */
     public function find(int $id)
     {
@@ -25,11 +25,25 @@ class EventService
         $event = Event::find($id);
         return EventResource::make($event);
     }
+    
+    /**
+    * EVENTOS - BUSCAR EVENTOS DO USUÁRIO
+    * @param int $id: ID do usuário
+    * @return EventResource[]: Collection de eventos formatados;
+    */
+    public function get(int $id)
+    {
+        $events = Event::with(['address', 'gameConfig', 'avaliations', 'participants', 'rules', 'news', 'games'])
+            ->whereHas('participants', fn($q) => $q->where('user_id', $id))
+            ->get();
 
-    /* 
+        return EventResource::collection($events);
+    }
+
+    /**
     * EVENTOS - CRIAÇÃO DE EVENTOS
     * @param Request: Dados do Evento e Participantes;
-    * @return EventResource || []: Array de eventos recomendados;
+    * @return EventResource - App\Models\Event: Evento;
     */
     public function create(Request $request)
     {
