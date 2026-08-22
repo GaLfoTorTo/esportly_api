@@ -83,10 +83,7 @@ jobs:
           command_timeout: 30m
           script: |
             set -e
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm use 24
-
+            export PATH="/www/server/nvm/versions/node/v24.19.0/bin:$PATH"
             APP_PATH="${{ needs.resolve-env.outputs.app_path }}"
             BRANCH="${{ needs.resolve-env.outputs.branch }}"
 
