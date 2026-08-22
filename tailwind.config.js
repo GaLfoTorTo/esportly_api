@@ -11,6 +11,7 @@ module.exports = {
     extend: {
          colors: {
             primary: {
+              DEFAULT: 'var(--p-primary-500)',
               50: 'var(--p-primary-50)',
               100: 'var(--p-primary-100)',
               200: 'var(--p-primary-200)',
@@ -24,6 +25,7 @@ module.exports = {
               950: 'var(--p-primary-950)',
             },
             secondary: {
+              DEFAULT: 'var(--p-secondary-500)',
               50: 'var(--p-secondary-50)',
               100: 'var(--p-secondary-100)',
               200: 'var(--p-secondary-200)',

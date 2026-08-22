@@ -14,8 +14,8 @@ const features = [
     subtitle:    'Mantenha seu evento organizado.',
     description: 'Gestão completa do seu evento esportivo: participantes, partidas, escalações e resultados num só lugar.',
     footer:      'Controle total na palma da mão.',
-    class:       ['w-[15rem]', 'h-[30rem]'],
-    accent:      'var(--green-300)',
+    class:       ['w-[25rem]', 'h-[30rem]'],
+    accent:      'var(--green-500)',
     style: {
       backgroundImage:    "url('/img/feature/card_manager.jpg')",
       backgroundSize:     'cover',
@@ -28,8 +28,8 @@ const features = [
     title:       'Comunicação',
     subtitle:    'Chat centralizado no app.',
     description: 'Chats individuais e em grupo para combinar horários e estratégias com seus amigos sem sair do E-sportly.',
-    class:       ['w-[15rem]', 'h-[14rem]'],
-    accent:      'var(--blue-300)',
+    class:       ['w-[25rem]', 'h-[14rem]'],
+    accent:      'var(--blue-500)',
     style: {
       backgroundImage:    "url('/img/feature/card_chat.jpg')",
       backgroundSize:     'cover',
@@ -42,10 +42,10 @@ const features = [
     title:       'Notificações',
     subtitle:    'Fique por dentro de tudo.',
     description: 'Alertas em tempo real sobre partidas, convites e atualizações da sua vida de atleta.',
-    class:       ['w-[15rem]', 'h-[14rem]'],
-    accent:      'var(--orange-300)',
+    class:       ['w-[25rem]', 'h-[14rem]'],
+    accent:      'var(--orange-500)',
     style: {
-      backgroundImage:    "url('/img/futebol/football.jpg')",
+      backgroundImage:    "url('/img/feature/card_notify.png')",
       backgroundSize:     'cover',
       backgroundPosition: 'center',
     },
@@ -57,10 +57,10 @@ const features = [
     subtitle:    'Explore eventos próximos a você.',
     description: 'Encontre peladas e quadras na sua região usando nossa base de dados geolocalizada.',
     footer:      '+15.000 locais cadastrados.',
-    class:       ['w-[15rem]', 'h-[30rem]'],
+    class:       ['w-[25rem]', 'h-[30rem]'],
     accent:      'var(--cyan-500)',
     style: {
-      backgroundImage:    "url('/img/futebol/football.jpg')",
+      backgroundImage:    "url('/img/feature/card_map.jpg')",
       backgroundSize:     'cover',
       backgroundPosition: 'center',
     },
@@ -72,10 +72,10 @@ const features = [
     subtitle:    'Seu perfil, suas características.',
     description: 'Defina posições, arquétipos e habilidades do seu atleta para uma experiência única.',
     footer:      'Personalize seu perfil de atleta.',
-    class:       ['w-[23rem]', 'h-[15rem]'],
-    accent:      'var(--purple-300)',
+    class:       ['w-[38rem]', 'h-[15rem]'],
+    accent:      'var(--purple-500)',
     style: {
-      backgroundImage:    "url('/img/futebol/football.jpg')",
+      backgroundImage:    "url('/img/feature/card_custom.png')",
       backgroundSize:     'cover',
       backgroundPosition: 'center',
     },
@@ -87,10 +87,10 @@ const features = [
     subtitle:    'Suba de nível a cada partida.',
     description: 'Gamificação com desafios semanais, mensais e emblemas especiais para os melhores atletas.',
     footer:      'Desafios esportivos e recompensas.',
-    class:       ['w-[23rem]', 'h-[15rem]'],
+    class:       ['w-[38rem]', 'h-[15rem]'],
     accent:      'var(--yellow-500)',
     style: {
-      backgroundImage:    "url('/img/futebol/football.jpg')",
+      backgroundImage:    "url('/img/feature/card_achiviement.jpg')",
       backgroundSize:     'cover',
       backgroundPosition: 'center',
     },
@@ -103,7 +103,7 @@ const hovered = ref(false);
 
 <template>
   <Card
-    class="feat-card relative cursor-pointer select-none"
+    class="feat-card relative cursor-pointer select-none overflow-hidden"
     :class="card.class"
     :style="card.style"
     @mouseenter="hovered = true"
@@ -115,28 +115,38 @@ const hovered = ref(false);
 
       <!-- Accent glow on hover -->
       <div
-        class="card-glow"
-        :style="{ background: card.accent, opacity: hovered ? 0.18 : 0 }"
+        class="card-gradiente-houver"
+        :style="{ background: card.accent, opacity: hovered ? 0.45 : 0 }"
       />
 
       <!-- Default state: icon + title -->
       <Transition name="flip">
-        <div v-if="!hovered" class="card-front">
-          <div class="card-icon-wrap" :style="{ color: card.accent }">
-            <i :class="card.icon" />
-          </div>
-          <h3 class="card-title">{{ card.title }}</h3>
-          <small class="card-subtitle">{{ card.subtitle }}</small>
+        <div v-if="!hovered" class="flex flex-col justify-center items-center absolute inset-0 z-2 gap-2 p-2 text-center">
+          <Button 
+            :icon="card.icon"
+            size="large"
+            class="card-icon-wrap"
+            iconOnly
+            rounded
+          />
+          <h3 class="font-semibold text-white">{{ card.title }}</h3>
+          <small class="text-zinc-300">{{ card.subtitle }}</small>
         </div>
       </Transition>
 
       <!-- Hover state: description -->
       <Transition name="flip-reverse">
-        <div v-if="hovered" class="card-back">
-          <i :class="[card.icon, 'card-back-icon']" :style="{ color: card.accent }" />
-          <h3 class="card-back-title">{{ card.title }}</h3>
-          <p class="card-desc">{{ card.description }}</p>
-          <small v-if="card.footer" class="card-footer-text">{{ card.footer }}</small>
+        <div v-if="hovered" class="flex flex-col justify-end items-start absolute inset-0 z-2 gap-2 p-5">
+          <Button 
+            :icon="card.icon"
+            size="large"
+            class="card-icon-wrap"
+            iconOnly
+            rounded
+          />
+          <h3 class="font-semibold text-white">{{ card.title }}</h3>
+          <small class="text-zinc-300">{{ card.description }}</small>
+          <small v-if="card.footer" class="text-zinc-300">{{ card.footer }}</small>
         </div>
       </Transition>
     </template>
@@ -144,36 +154,7 @@ const hovered = ref(false);
 </template>
 
 <style scoped>
-/* ─── Card base ─── */
-.feat-card {
-  border-radius: 1.25rem !important;
-  overflow: hidden;
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow  0.35s ease;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-}
-.feat-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.22);
-}
-
-:deep(.p-card-body) {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow: hidden;
-  padding: 0;
-}
-:deep(.p-card-content) {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  height: 100%;
-}
-
-/* Background layers */
+/* Card Gradiente Background */
 .card-gradient {
   position: absolute;
   inset: 0;
@@ -186,7 +167,8 @@ const hovered = ref(false);
   z-index: 0;
   pointer-events: none;
 }
-.card-glow {
+
+.card-gradiente-houver {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -195,76 +177,28 @@ const hovered = ref(false);
   mix-blend-mode: screen;
 }
 
-/* ─── Front (default) ─── */
-.card-front {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 1.5rem;
-  text-align: center;
+/* Card base */
+.feat-card {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow  0.35s ease;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
 }
+
+.feat-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.22);
+}
+
+/*  Card feture Front (default) */
 .card-icon-wrap {
-  width: 56px; height: 56px;
-  border-radius: 50%;
+  color: white;
   background: rgba(255,255,255,0.1);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.5rem;
   backdrop-filter: blur(4px);
   border: 1px solid rgba(255,255,255,0.15);
   transition: transform 0.3s ease;
 }
+
 .feat-card:hover .card-icon-wrap { transform: scale(1.1); }
-
-.card-title {
-  color: white;
-  font-weight: 800;
-  font-size: 1.05rem;
-  margin: 0;
-  letter-spacing: -0.01em;
-}
-.card-subtitle {
-  color: rgba(255,255,255,0.6);
-  font-size: 0.78rem;
-}
-
-/* ─── Back (hover) ─── */
-.card-back {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-end;
-  padding: 1.5rem;
-  gap: 0.5rem;
-}
-.card-back-icon {
-  font-size: 1.25rem;
-  margin-bottom: 0.2rem;
-}
-.card-back-title {
-  color: white;
-  font-size: 1.1rem;
-  font-weight: 800;
-  margin: 0;
-  letter-spacing: -0.01em;
-}
-.card-desc {
-  color: rgba(255,255,255,0.78);
-  font-size: 0.82rem;
-  line-height: 1.55;
-  margin: 0;
-}
-.card-footer-text {
-  color: rgba(255,255,255,0.45);
-  font-size: 0.72rem;
-}
 
 /* ─── Transitions ─── */
 .flip-enter-active, .flip-leave-active,
