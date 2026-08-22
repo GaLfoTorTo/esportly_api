@@ -2,7 +2,7 @@
    import { onMounted, onUnmounted } from 'vue';
    import { Button } from 'primevue';
    import gsap from 'gsap';
-   import { useCurrentSport } from '@/composables/useCurrentSport';
+   import { useCurrentSport } from '@/Composables/useCurrentSport.js';
 
    const { sports, sportCurrent, sportNext, switchSport, cycleNext } = useCurrentSport();
 

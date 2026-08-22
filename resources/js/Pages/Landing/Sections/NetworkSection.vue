@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import { useInView } from '@/Composables/useInView.js';
 import { Card } from 'primevue';
-import { useCurrentSport } from '@/composables/useCurrentSport';
+import { useCurrentSport } from '@/Composables/useCurrentSport.js';
 
 //COMPOSABEL - VIEW
 const { el, inView } = useInView(0.12);
@@ -90,7 +90,7 @@ watch(inView, (val) => { if (val) animateCounters(); });
       <!-- Left: text + card stats -->
       <div class="flex flex-1 flex-col max-w-lg max-h-lg net-cards gap-5" :class="{ visible: inView }">
          <h2 class="text-2xl text-secondary-500 uppercase font-bold">Comunidade</h2>
-         <h3 class="text-5xl text-white font-semibold">Conecte-se com novo atletas e amigos</h3>
+         <h3 class="text-5xl text-white font-semibold">Conecte-se com novos atletas e amigos</h3>
          <p class="text-zinc-300">O E-sportly vai além da organização de partidas. Ele conecta atletas da sua
          região, constrói comunidades e torna cada pelada uma experiência social única.</p>
          <!-- Cards stats -->
