@@ -131,6 +131,7 @@ jobs:
             # ── 5. DEPENDÊNCIAS NODE ────────────────────────────────────────
             echo ""
             echo "▶ [5/9] Instalando dependências Node.js (npm)..."
+            rm -rf node_modules package-lock.json
             npm install
 
             # ── 6. LIMPAR CACHE LARAVEL ─────────────────────────────────────
@@ -158,7 +159,7 @@ jobs:
             echo "▶ [8/9] Reiniciando workers de fila (Supervisor)..."
             php artisan queue:restart
             php artisan reverb:restart
-            sudo supervisorctl restart laravel-worker:* || true
+            sudo supervisorctl restart events_reverb:* || true
 
             # ── 9. BUILD DA APLICAÇÃO ───────────────────────────────────────
             echo ""
