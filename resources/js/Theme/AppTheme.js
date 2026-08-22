@@ -198,8 +198,8 @@ const appComponents = {
          light: {
             root: {
                primary: {
-                  background: '{secondary.color}',
-                  hoverBackground: '{primary.color}',
+                  background: '{primary.color}',
+                  hoverBackground: '{primary.hover.color}',
                   activeBackground: '{primary.active.color}',
                   borderColor: '{primary.color}',
                   hoverBorderColor: '{primary.color}',

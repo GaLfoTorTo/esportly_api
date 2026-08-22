@@ -1,41 +1,11 @@
    <script setup>
-   import { computed, onMounted, onUnmounted, ref } from 'vue';
+   import { onMounted, onUnmounted } from 'vue';
    import { Button } from 'primevue';
    import gsap from 'gsap';
+   import { useCurrentSport } from '@/composables/useCurrentSport';
 
-   const emit = defineEmits(['sport-changed']);
+   const { sports, sportCurrent, sportNext, switchSport, cycleNext } = useCurrentSport();
 
-   //SPORTS
-   const sports = [
-      {
-         id: 1, 
-         key: 'futebol', 
-         label: 'Futebol', 
-         icon: 'fas fa-futbol',
-         severity: 'primary',
-         video: '/videos/futebol_1.mp4',
-         overlay: 'overlay-futebol',
-      },
-      {
-         id: 2, 
-         key: 'basquete', 
-         label: 'Basquete', 
-         icon: 'fas fa-basketball-ball',
-         severity: 'orange',
-         video: '/videos/basquete_1.mp4',
-         overlay: 'overlay-basquete',
-      },
-      {
-         id: 3, 
-         key: 'volei', 
-         label: 'Vôlei', 
-         icon: 'fas fa-volleyball-ball',
-         severity: 'bege',
-         video: '/videos/volei_1.mp4',
-         overlay: 'overlay-volei',
-      },
-   ];
-   
    //STATISTICS
    const stats = [
       { title: 'Esportes', value: '3'},
@@ -44,34 +14,10 @@
       { title: 'Peladas', value: '+30'},
    ]
 
-   const transitioning  = ref(false);
-   const sportIndex     = ref(0);
-   const sportNextIndex = ref(null);
-   const sportCurrent = computed(() => sports[sportIndex.value]);
-   const sportNext    = computed(() => sportNextIndex.value !== null ? sports[sportNextIndex.value] : null);
-
    let intervalId = null;
 
-   const switchSport = (i) => {
-   if (transitioning.value || i === sportIndex.value) return;
-   transitioning.value = true;
-   sportNextIndex.value = i;
-
-   setTimeout(() => {
-      sportIndex.value = i;
-      emit('sport-changed', sports[i].key);
-      setTimeout(() => {
-         transitioning.value = false;
-         sportNextIndex.value = null;
-      }, 60);
-   }, 650);
-   };
-
-   const cycleNext = () => switchSport((sportIndex.value + 1) % sports.length);
-
    onMounted(() => {
-      intervalId = setInterval(cycleNext, 10000);
-      emit('sport-changed', sports[0].key);
+      intervalId = setInterval(() => cycleNext(), 10000);
 
       // Entrance timeline
       const tl = gsap.timeline({ delay: 0.4 });

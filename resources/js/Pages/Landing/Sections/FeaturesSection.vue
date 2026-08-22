@@ -13,7 +13,7 @@ const { el, inView } = useInView(0.1);
   >
     <!-- Header -->
     <div class="flex flex-col gap-5 justify-center items-center text-center feat-header" :class="{ visible: inView }">
-      <span class="uppercase text-primary-500 font-semibold">Funcionalidades</span>
+      <span class="text-2xl uppercase text-primary-500 font-semibold">Funcionalidades</span>
       <h2 class="text-5xl font-bold text-secondary-500 max-w-[50%]">Uma experiência única no mundo tecno-esportivo</h2>
       <p class="text-zinc-500 max-w-[40%]">Toda a facilidade que a tecnologia proporciona na palma das suas mãos, a serviço da sua diversão e do seu esporte.</p>
     </div>

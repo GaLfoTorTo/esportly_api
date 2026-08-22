@@ -1,5 +1,4 @@
 <script setup>
-import { ref } from 'vue';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -10,11 +9,11 @@ import NetworkSection   from './Sections/NetworkSection.vue';
 import ModalitySection  from './Sections/ModalitySection.vue';
 import DownloadSection  from './Sections/DownloadSection.vue';
 import FooterSection    from './Sections/FooterSection.vue';
+import { useCurrentSport } from '@/composables/useCurrentSport';
 
-// Register once — child components reuse without re-registering
 gsap.registerPlugin(ScrollTrigger);
 
-const currentSport = ref('futebol');
+const { sportCurrent } = useCurrentSport();
 
 const scrollTo = (section) => {
   document.getElementById(section)?.scrollIntoView({ behavior: 'smooth' });
@@ -22,9 +21,9 @@ const scrollTo = (section) => {
 </script>
 
 <template>
-  <LandingNavBar :current-sport="currentSport" @navigate="scrollTo" />
+  <LandingNavBar :current-sport="sportCurrent.key" @navigate="scrollTo" />
   <main>
-    <HeroSection @sport-changed="(s) => currentSport = s" />
+    <HeroSection />
     <FeaturesSection />
     <NetworkSection  />
     <ModalitySection />

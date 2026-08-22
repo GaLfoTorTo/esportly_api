@@ -34,12 +34,11 @@ const sportClass = computed(() => `navbar-${props.currentSport}`);
     </template>
 
     <template #center>
-      <nav class="flex gap-1">
+      <nav class="flex gap-2">
         <Button
           v-for="item in items"
           :key="item.section"
           :label="item.label"
-          variant="text"
           class="nav-link"
           @click="$emit('navigate', item.section)"
         />
@@ -50,19 +49,16 @@ const sportClass = computed(() => `navbar-${props.currentSport}`);
       <div class="flex gap-2">
         <Button 
           label="Login"    
-          variant="link"     
           as="a" 
           href="/login"    
           class="nav-link" 
         />
         <Button 
           label="Cadastrar" 
-          severity="contrast" 
+          severity="secondary" 
           as="a" 
           href="/register" 
           class="nav-cta" 
-          size="small" 
-          rounded 
         />
       </div>
     </template>
@@ -107,13 +103,8 @@ const sportClass = computed(() => `navbar-${props.currentSport}`);
   transition: color 0.2s ease !important;
 }
 
-:deep(.nav-cta) {
-  background: white !important;
-  color: var(--blue-500) !important;
-  border: none !important;
-  font-weight: bold !important;
-  font-size: 0.8rem !important;
+:deep(.nav-link:hover) { 
+  background: rgba(4, 211, 97, 0.3) !important;
+  transition: background 0.5s ease;
 }
-
-:deep(.nav-link:hover) { color: #ffffff !important; }
 </style>
