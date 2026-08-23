@@ -140,7 +140,7 @@ watch(inView, (val) => { if (val) animateCounters(); });
             <Button
                :icon="item.icon ?? sportCurrent.icon"
                class="border-none! text-xs! absolute! -bottom-1 -right-1 w-6! h-6! p-2"
-               :class="[item.color ? `bg-${item.color} text-white!`: null]"
+               :class="[item.color ? `bg-${item.color} text-white!`: `bg-${sportCurrent.background}`]"
                iconOnly
                rounded
             />

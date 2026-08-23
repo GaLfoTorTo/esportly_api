@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import { Card } from 'primevue';
 
+const imgLoaded = ref(false);
+
 const props = defineProps({
   feature: String,
 });
@@ -16,11 +18,7 @@ const features = [
     footer:      'Controle total na palma da mão.',
     class:       ['w-[25rem]', 'h-[30rem]'],
     accent:      'var(--green-500)',
-    style: {
-      backgroundImage:    "url('/img/feature/card_manager.jpg')",
-      backgroundSize:     'cover',
-      backgroundPosition: 'center',
-    },
+    img:         '/img/feature/card_manager.jpg',
   },
   {
     type:        'chat',
@@ -30,11 +28,7 @@ const features = [
     description: 'Chats individuais e em grupo para combinar horários e estratégias com seus amigos sem sair do E-sportly.',
     class:       ['w-[25rem]', 'h-[14rem]'],
     accent:      'var(--blue-500)',
-    style: {
-      backgroundImage:    "url('/img/feature/card_chat.jpg')",
-      backgroundSize:     'cover',
-      backgroundPosition: 'center',
-    },
+    img:         '/img/feature/card_chat.jpg',
   },
   {
     type:        'notify',
@@ -44,11 +38,7 @@ const features = [
     description: 'Alertas em tempo real sobre partidas, convites e atualizações da sua vida de atleta.',
     class:       ['w-[25rem]', 'h-[14rem]'],
     accent:      'var(--orange-500)',
-    style: {
-      backgroundImage:    "url('/img/feature/card_notify.png')",
-      backgroundSize:     'cover',
-      backgroundPosition: 'center',
-    },
+    img:         '/img/feature/card_notify.png',
   },
   {
     type:        'maps',
@@ -59,11 +49,7 @@ const features = [
     footer:      '+15.000 locais cadastrados.',
     class:       ['w-[25rem]', 'h-[30rem]'],
     accent:      'var(--cyan-500)',
-    style: {
-      backgroundImage:    "url('/img/feature/card_map.jpg')",
-      backgroundSize:     'cover',
-      backgroundPosition: 'center',
-    },
+    img:         '/img/feature/card_map.jpg',
   },
   {
     type:        'custom',
@@ -74,11 +60,7 @@ const features = [
     footer:      'Personalize seu perfil de atleta.',
     class:       ['w-[38rem]', 'h-[15rem]'],
     accent:      'var(--purple-500)',
-    style: {
-      backgroundImage:    "url('/img/feature/card_custom.png')",
-      backgroundSize:     'cover',
-      backgroundPosition: 'center',
-    },
+    img:         '/img/feature/card_custom.png',
   },
   {
     type:        'achievement',
@@ -89,11 +71,7 @@ const features = [
     footer:      'Desafios esportivos e recompensas.',
     class:       ['w-[38rem]', 'h-[15rem]'],
     accent:      'var(--yellow-500)',
-    style: {
-      backgroundImage:    "url('/img/feature/card_achiviement.jpg')",
-      backgroundSize:     'cover',
-      backgroundPosition: 'center',
-    },
+    img:         '/img/feature/card_achiviement.jpg',
   },
 ];
 
@@ -105,11 +83,21 @@ const hovered = ref(false);
   <Card
     class="feat-card relative cursor-pointer select-none overflow-hidden"
     :class="card.class"
-    :style="card.style"
     @mouseenter="hovered = true"
     @mouseleave="hovered = false"
   >
     <template #content>
+      <!-- Background image with lazy load + fade-in -->
+      <img
+        :src="card.img"
+        alt=""
+        class="card-bg-img"
+        :class="{ loaded: imgLoaded }"
+        loading="lazy"
+        aria-hidden="true"
+        @load="imgLoaded = true"
+      />
+
       <!-- Dark gradient base -->
       <div class="card-gradient" />
 
@@ -154,6 +142,20 @@ const hovered = ref(false);
 </template>
 
 <style scoped>
+/* Background image — lazy load com fade-in */
+.card-bg-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  z-index: 0;
+}
+.card-bg-img.loaded { opacity: 1; }
+
 /* Card Gradiente Background */
 .card-gradient {
   position: absolute;

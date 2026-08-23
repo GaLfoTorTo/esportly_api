@@ -12,10 +12,10 @@ const props = defineProps({
 const emit = defineEmits(['navigate']);
 
 const items = [
-  { label: 'Overview',    section: 'overview',  icon: 'fas fa-home' },
-  { label: 'Features',   section: 'features',  icon: 'fas fa-cogs' },
+  { label: 'Visão Geral',    section: 'overview',  icon: 'fas fa-home' },
+  { label: 'Funcionalidades',   section: 'features',  icon: 'fas fa-cogs' },
   { label: 'Modalidades',section: 'modality',  icon: 'fas fa-futbol' },
-  { label: 'Network',    section: 'network',   icon: 'fas fa-globe' },
+  { label: 'Comunidade',    section: 'network',   icon: 'fas fa-globe' },
   { label: 'Download',   section: 'download',  icon: 'fas fa-download' },
 ];
 
