@@ -16,7 +16,7 @@ import { Card } from 'primevue';
          features:    ['Configurações de partidas', 'Acompanhamento ao vivo', 'Ranking de Artilharia / Assistência', 'Modo técnico (Cartola-like)'],
          modalities:  ['Futebol', 'Fut7', 'Futsal'],
          color:       'green',
-         image:       'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=900&auto=format&fit=crop&q=75',
+         image:       '/img/cards/football_card.jpg',
       },
       {
          key:         'basquete',
@@ -27,7 +27,7 @@ import { Card } from 'primevue';
          features:    ['Contagem de pontos', 'Estatísticas de atleta', 'Votação de MVP', 'Agendamento de partidas'],
          modalities:  ['Tradicional', '3x3', 'Streetball'],
          color:       'orange',
-         image:       'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&auto=format&fit=crop&q=75',
+         image:       '/img/cards/basketball_card.jpg',
       },
       {
          key:         'volei',
@@ -36,9 +36,9 @@ import { Card } from 'primevue';
          subtitle:     'A praia, a areia e a sua rede de amigos.',
          description: 'Vôlei de praia ou quadra — organize sets, registre serviços e bloqueios. O E-sportly leva o espírito competitivo para cada saque e defesa espetacular.',
          features:    ['Definição de Sets e pontos', 'Gestão de equipes', 'Estatísticas de pontuação', 'Busca de quadras próximas'],
-         modalities:  ['Volei Indor', 'Volei de Praia', 'Fut Volei'],
+         modalities:  ['Volei Indoor', 'Volei de Praia', 'Fut Volei'],
          color:       'bege',
-         image:       'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=900&auto=format&fit=crop&q=75',
+         image:       '/img/cards/beach_volleyball_card.jpg',
       },
    ];
    //ESPORTE SELECIONADO
@@ -55,7 +55,7 @@ import { Card } from 'primevue';
       <div class="flex flex-col gap-5 justify-center items-center text-center feat-header" :class="{ visible: inView }">
          <h2 class="text-2xl text-primary-500 uppercase font-bold">Modalidades</h2>
          <h3 class="text-5xl text-secondary-500 font-semibold">Seu esporte, suas regras</h3>
-         <p class="text-zinc-500 max-w-[40%]">E-sportly foi criado para os amantes do futebol, mas cresce junto com você. Escolha sua modalidade e domine o jogo do seu jeito.</p>
+         <p class="text-zinc-500 max-w-[40%]">E-sportly foi criado para os amantes do esporte no geral e está pronto para cresce junto com você. Escolha sua modalidade e domine o jogo do seu jeito.</p>
       </div>
 
       <!-- Tab selector -->
@@ -83,7 +83,13 @@ import { Card } from 'primevue';
                background: `var(--${sportCurrent.color}-500)`
             }"
          >
-            <div class="mod-bg" :style="{ backgroundImage: `url(${sportCurrent.image})`, opacity: 0.5}" />
+            <div 
+               class="mod-bg" 
+               :style="{ 
+                  backgroundImage: `url(${sportCurrent.image})`, 
+                  opacity: 0.5, 
+               }" 
+            />
             <div
                class="absolute inset-0 z-1 pointer-events-none"
                :style="{
@@ -93,28 +99,31 @@ import { Card } from 'primevue';
                      color-mix(in srgb, var(--${sportCurrent.color}-700) 100%, transparent) 100%)`
                }"
             />
-            <div class="flex flex-col gap-5 p-10 z-2 relative">
+            <div 
+               class="flex flex-col gap-5 p-10 z-2 relative"
+               :class="[sportCurrent.key == 'volei' ? 'text-secondary-500' : 'text-white']"
+            >
                <div class="flex items-end gap-3">
-                  <i :class="[sportCurrent.icon, 'text-white block text-7xl']" />
-                  <h2 class="text-white font-bold text-5xl">{{ sportCurrent.label }}</h2>
+                  <i :class="[sportCurrent.icon, 'block text-7xl']" />
+                  <h2 class=" font-bold text-5xl">{{ sportCurrent.label }}</h2>
                </div>
-               <h3 class="text-white font-semibold text-3xl">{{ sportCurrent.subtitle }}</h3>
-               <p class="text-white max-w-md">{{ sportCurrent.description }}</p>
-               <div class="flex justify-between items-end w-full">
-                  <ul class="list-none flex flex-col gap-1">
-                     <li v-for="feat in sportCurrent.features" :key="feat" class="text-white">
-                        <i class="fas fa-check-circle mr-2 text-white" />
-                        <span>{{ feat }}</span>
-                     </li>
-                  </ul>
-                  <div class="flex gap-2">
-                     <Badge 
-                        v-for="item in sportCurrent.modalities"
-                        :value="item" 
-                        class="mod-badge rounded-4xl!"
-                     />
-                  </div>
+               <h3 class="font-semibold text-3xl">{{ sportCurrent.subtitle }}</h3>
+               <p class="max-w-md">{{ sportCurrent.description }}</p>
+               <div class="flex gap-2">
+                  <Badge 
+                     v-for="item in sportCurrent.modalities"
+                     :value="item" 
+                     size="large"
+                     class="mod-badge rounded-4xl!"
+                     :class="[sportCurrent.key == 'volei' ? 'text-secondary-500! border-secondary-500!' : 'text-white']"
+                  />
                </div>
+               <ul class="list-none flex flex-col gap-1">
+                  <li v-for="feat in sportCurrent.features" :key="feat">
+                     <i class="fas fa-check-circle mr-2 " />
+                     <span>{{ feat }}</span>
+                  </li>
+               </ul>
             </div>
          </div>
       </Transition>
