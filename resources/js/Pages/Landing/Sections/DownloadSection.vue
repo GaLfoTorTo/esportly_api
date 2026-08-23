@@ -154,7 +154,7 @@ const features = [
   animation: phoneFloat 3.5s ease-in-out 0.5s infinite;
 }
 @keyframes phoneFloat {
-  0%,100% { transform: translateY(0); }
+  0%, 100% { transform: translateY(0); }
   50%      { transform: translateY(-12px); }
 }
 

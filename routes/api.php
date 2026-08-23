@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\GameController;
 
@@ -44,6 +45,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     // EVENTO
     Route::prefix('events')->group(function () {
+        Route::get('/',[EventController::class, 'events']);
         // SALA (STREAM)
         Route::prefix('/room')->group(function () {
             Route::post('stream',[RoomController::class, 'stream']);

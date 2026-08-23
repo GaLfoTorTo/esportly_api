@@ -31,11 +31,11 @@ class EventService
     * @param int $id: ID do usuário
     * @return EventResource[]: Collection de eventos formatados;
     */
-    public function get(int $id)
+    public function get(?int $id=null)
     {
         $events = Event::with(['address', 'gameConfig', 'avaliations', 'participants', 'rules', 'news', 'games'])
-            ->whereHas('participants', fn($q) => $q->where('user_id', $id))
-            ->get();
+                        ->when($id, fn($q) => $q->whereHas('participants', fn($q) => $q->where('user_id', $id)))
+                        ->get();
 
         return EventResource::collection($events);
     }

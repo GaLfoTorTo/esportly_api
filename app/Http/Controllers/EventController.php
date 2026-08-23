@@ -40,11 +40,11 @@ class EventController extends Controller
     public function events(Request $request){
         try {
             //BUSCAR EVENTOS
-            $event = $this->registerService->get();
+            $events = $this->registerService->get();
             return response()->json(['events' => $events], 201);
         }catch(\Exception $e) {
             //CAPTURAR ERRO E ENVIAR PARA O LOG
-            Log::channel('registro')->error("[Erro de Registro][User][Registro]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
+            Log::channel('register')->error("[Erro de Registro][User][Registro]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
             //REDIRECIONAR PARA O FORMULÁRIO COM A MENSAGEM DE ERRO
             throw new \Exception("Ocorreu um erro ao criar o evento. Por favor, tente novamente.");
         }
@@ -63,7 +63,7 @@ class EventController extends Controller
             return response()->json(['evento' => $event], 201);
         }catch(\Exception $e) {
             //CAPTURAR ERRO E ENVIAR PARA O LOG
-            Log::channel('registro')->error("[Erro de Registro][User][Registro]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
+            Log::channel('register')->error("[Erro de Registro][User][Registro]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
             //REDIRECIONAR PARA O FORMULÁRIO COM A MENSAGEM DE ERRO
             throw new \Exception("Ocorreu um erro ao criar o evento. Por favor, tente novamente.");
         }

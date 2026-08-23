@@ -15,12 +15,13 @@ class UserConfigResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'           => $this->id,
-            'uuid'         => $this->uuid,
-            'firstName'    => $this->first_name,
-            'createdAt'    => $this->created_at?->toIso8601String(),
-            'updatedAt'    => $this->updated_at?->toIso8601String(),
-            'deletedAt'    => $this->deleted_at?->toIso8601String(),
+            'id'            => $this->id,
+            'userId'        => $this->user_id,
+            'main_modality' => $this->main_modality,
+            'modalities'    => $this->modalities,
+            'createdAt'     => $this->created_at?->toIso8601String(),
+            'updatedAt'     => $this->updated_at?->toIso8601String(),
+            'deletedAt'     => $this->deleted_at?->toIso8601String(),
         ];
     }
 }

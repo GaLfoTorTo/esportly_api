@@ -34,7 +34,7 @@ class UserController extends Controller
                 return response()->json(['message' => 'Os dados do usuário estão vazios!'], 400);
             }
         }catch(\Exception $e) {
-            Log::channel('registro')->error("[Erro de Registro][User][Registro]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
+            Log::channel('register')->error("[Erro de Registro][User][Registro]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
             return response()->json(['message' => 'Houve um erro ao registrar o Usuário.'], 400);
         }
     }
