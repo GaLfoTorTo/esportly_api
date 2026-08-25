@@ -1,10 +1,18 @@
    <script setup>
-   import { onMounted, onUnmounted } from 'vue';
+   import { ref, watch, onMounted, onUnmounted } from 'vue';
    import { Button } from 'primevue';
    import gsap from 'gsap';
    import { useCurrentSport } from '@/Composables/useCurrentSport.js';
 
    const { sports, sportCurrent, sportNext, switchSport, cycleNext } = useCurrentSport();
+
+   const videoEl = ref(null);
+
+   const applyPlaybackRate = () => {
+      if (videoEl.value) videoEl.value.playbackRate = sportCurrent.value.playbackRate ?? 1;
+   };
+
+   watch(sportCurrent, applyPlaybackRate);
 
    //STATISTICS
    const stats = [
@@ -45,12 +53,14 @@
       <!-- Background Video -->
       <div class="absolute z-0 inset-0">
          <video
+            ref="videoEl"
             :key="sportCurrent.id"
-            autoplay 
-            muted 
-            loop 
+            autoplay
+            muted
+            loop
             playsinline
             class="fade-video absolute w-full h-full object-cover"
+            @loadeddata="applyPlaybackRate"
          >
             <source :src="sportCurrent.video" type="video/mp4" />
          </video>

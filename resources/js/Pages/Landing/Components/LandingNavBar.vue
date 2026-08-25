@@ -39,7 +39,7 @@ const sportClass = computed(() => `navbar-${props.currentSport}`);
           v-for="item in items"
           :key="item.section"
           :label="item.label"
-          class="nav-link"
+          :class="`nav-link ${sportClass}`"
           @click="$emit('navigate', item.section)"
         />
       </nav>
@@ -51,7 +51,7 @@ const sportClass = computed(() => `navbar-${props.currentSport}`);
           label="Login"    
           as="a" 
           href="/login"    
-          class="nav-link" 
+          :class="`nav-link ${sportClass}`" 
         />
         <Button 
           label="Cadastrar" 
@@ -100,11 +100,12 @@ const sportClass = computed(() => `navbar-${props.currentSport}`);
   border: none !important;
   color: var(--blue-500) !important;
   font-weight: bold !important;
+  position: relative !important;
   transition: color 0.2s ease !important;
+  text-decoration: none !important;
 }
 
-:deep(.nav-link:hover) { 
-  background: rgba(4, 211, 97, 0.3) !important;
-  transition: background 0.5s ease;
+:deep(.nav-link:hover .p-button-label) {
+  font-weight: bold!important;
 }
 </style>

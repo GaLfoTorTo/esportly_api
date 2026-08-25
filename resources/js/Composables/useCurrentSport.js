@@ -10,6 +10,7 @@ const sports = [
         background: 'green-300',
         video: '/videos/futebol_1.mp4',
         overlay: 'overlay-futebol',
+        playbackRate: 0.6,
     },
     {
         id: 2,
@@ -20,6 +21,7 @@ const sports = [
         background: 'orange-500',
         video: '/videos/basquete_1.mp4',
         overlay: 'overlay-basquete',
+        playbackRate: 1,
     },
     {
         id: 3,
@@ -30,6 +32,7 @@ const sports = [
         background: 'bege-300',
         video: '/videos/volei_1.mp4',
         overlay: 'overlay-volei',
+        playbackRate: 1,
     },
 ];
 

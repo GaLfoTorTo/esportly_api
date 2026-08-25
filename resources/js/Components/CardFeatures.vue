@@ -176,7 +176,6 @@ const hovered = ref(false);
   z-index: 1;
   pointer-events: none;
   transition: opacity 0.45s ease;
-  mix-blend-mode: screen;
 }
 
 /* Card base */
@@ -194,8 +193,7 @@ const hovered = ref(false);
 /*  Card feture Front (default) */
 .card-icon-wrap {
   color: white;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(4px);
+  background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.15);
   transition: transform 0.3s ease;
 }

@@ -62,7 +62,6 @@ const { el, inView } = useInView(0.1);
   transform: translateY(36px);
   transition: opacity 0.65s ease var(--delay, 0ms),
               transform 0.65s ease var(--delay, 0ms);
-  will-change: transform, opacity;
 }
 #feat-row-1.visible .anim-item,
 #feat-row-2.visible .anim-item {
