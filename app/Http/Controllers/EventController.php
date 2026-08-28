@@ -77,13 +77,10 @@ class EventController extends Controller
     */
     public function participants(Request $request){
         try {
-            //INICIALIZAR SERVIÇO DE EVENTOS E CRIAR NOVO EVENTO
-            $event = $this->registerService->find($request->id);
-            return response()->json(['participants' => $event->participants], 200);
+            $participants = $this->registerService->participants($request->id);
+            return response()->json(['participants' => $participants], 200);
         }catch(\Exception $e) {
-            //CAPTURAR ERRO E ENVIAR PARA O LOG
             Log::channel('register')->error("[Erro de Registro][User][Registro]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
-            //REDIRECIONAR PARA O FORMULÁRIO COM A MENSAGEM DE ERRO
             throw new \Exception("Ocorreu um erro ao buscar os participants do evento. Por favor, tente novamente.");
         }
     }

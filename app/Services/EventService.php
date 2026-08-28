@@ -11,6 +11,7 @@ use App\Models\Event;
 use App\Models\User;
 use App\Models\Participant;
 use App\Resources\EventResource;
+use App\Resources\UserResource;
 
 class EventService
 {
@@ -86,28 +87,20 @@ class EventService
         DB::commit();
         return new EventResource($event);
     }
+    
+    /**
+    * EVENTOS - BUSCA DE PARTICIPANTS
+    * @param Request: Id do evento
+    * @return UserResource - App\Models\User: Users;
+    */
+    public function participants(int $id)
+    {
+        $users = User::whereHas('participants', function ($q) use ($id) {
+                        $q->where('event_id', $id);
+                    })->with(['participants' => function ($q) use ($id) {
+                        $q->where('event_id', $id);
+                    }])->get();
 
-    private function participantsEvent($request, $event_id){
-        //VERIFICAR SE FOI RECEBIDO PARTICPANTES
-        if(!empty($request->participantes)){
-            //DECODIFICAR PARTICIPANTES
-            $participantes = json_decode($request->participantes);
-            //VERIFICAR SE O USUÁRIO É UM PARTICIPANTE
-            foreach($participantes as $key => $item){
-                //VERIFICAR SE O USUÁRIO É UM PARTICIPANTE
-                if(isset($item['user_id']) && !empty($item['user_id'])){
-                    //SALVAR PARTICIPANTE
-                    Participant::create([
-                        'event_id' => $event_id,
-                        'user_id' => $item['user_id'],
-                        'role' => $request->roles,
-                        'permissions' => $request->permissions,
-                        'status' => 'Avaliable',
-                        'joinedt_at' => date('Y-m-d H:i:s'),
-                    ]);
-                }
-            }
-
-        }
+        return UserResource::collection($users);
     }
 }
