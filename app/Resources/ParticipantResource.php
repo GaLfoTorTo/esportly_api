@@ -14,7 +14,7 @@ class ParticipantResource extends JsonResource
             'id'          => $this->id,
             'userId'     => $this->user_id,
             'eventId'     => $this->event_id,
-            'role'        => $this->role ?? [],
+            'roles'        => $this->roles ?? [],
             'permissions' => $this->permissions ?? [],
             'status'      => $this->status,
             'user'        => $this->whenLoaded('user', fn() => UserResource::make($this->user)),
