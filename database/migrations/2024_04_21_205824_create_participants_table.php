@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('event_id')->constrained('events')->cascadeOnDelete();
             $table->json('roles')->nullable();
             $table->json('permissions')->nullable();
-            $table->enum('status', ['Avaliable','Doubt','Injured','Out'])->default('Avaliable');
+            $table->enum('status', ['Avaliable','Doubt','None','Out'])->default('Avaliable');
             $table->timestamps();
             $table->softDeletes();
 
