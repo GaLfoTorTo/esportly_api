@@ -674,25 +674,67 @@ class EventSeed extends Seeder
             return json_encode($arr);
         }
 
+        // Fotos de locais/quadras do Unsplash
+        $placePhotos = [
+            'https://images.unsplash.com/photo-1596460107916-430662021049?w=640&h=400&fit=crop&q=80',
+            'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=640&h=400&fit=crop&q=80',
+            'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=640&h=400&fit=crop&q=80',
+            'https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=640&h=400&fit=crop&q=80',
+            'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=640&h=400&fit=crop&q=80',
+            'https://images.unsplash.com/photo-1505666287802-931dc83948e9?w=640&h=400&fit=crop&q=80',
+            'https://images.unsplash.com/photo-1543351611-58f69d7c1781?w=640&h=400&fit=crop&q=80',
+            'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=640&h=400&fit=crop&q=80',
+        ];
+
         //FUNÇÃO PARA RESGATAR FOTOS DO LOCAL DO EVENTO
         function getPlacePhoto(){
+            global $placePhotos;
             $faker = Factory::create();
             if($faker->boolean){
-                $count = $faker->numberBetween(0, 6);
+                $count = $faker->numberBetween(1, 4);
                 $arr = [];
-                for ($i = 0; $i <= $count; $i++) { 
-                    $arr[] = $faker->imageUrl(640,400,'nature',true);
-                } 
+                $shuffled = $placePhotos;
+                shuffle($shuffled);
+                for ($i = 0; $i < $count; $i++) {
+                    $arr[] = $shuffled[$i % count($shuffled)];
+                }
                 return json_encode($arr);
             }
             return null;
         }
+
+        // Fotos de eventos por modalidade do Unsplash
+        $eventPhotos = [
+            'Football' => [
+                'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1540747913346-19c4323153af?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1560272564-d037ef0e2dc1?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=640&h=400&fit=crop&q=80',
+            ],
+            'Basketball' => [
+                'https://images.unsplash.com/photo-1546519638405-a2d03ae8ef09?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1518063319789-7217e6706b04?w=640&h=400&fit=crop&q=80',
+            ],
+            'Volleyball' => [
+                'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1625929088-f4e5bf0b4723?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1547347298-4074fc3086f0?w=640&h=400&fit=crop&q=80',
+            ],
+        ];
 
         for($i = 1; $i <= 50; $i ++){
             //GERAR MODALIDADE DO EVENTO
             $modality = $faker->randomElement(['Football','Volleyball','Basketball']);
             //GERAR INDEX DE COORDENADA DO ENDEREÇO
             $coor = $faker->numberBetween(0, count($coordinates) - 1);
+            //SORTEAR FOTO DA MODALIDADE
+            $modalityPhotos = $eventPhotos[$modality];
+            $eventPhoto = $modalityPhotos[array_rand($modalityPhotos)];
             //GERAR EVENTO
             DB::table('events')->insert([
                 "uuid" => (string) Str::uuid(),
@@ -703,7 +745,7 @@ class EventSeed extends Seeder
                 'end_time' => $faker->dateTimeBetween("19:00", "23:00")->format("H:i"),
                 'modality' => $modality,
                 'collaborators' => $faker->boolean,
-                'photo' => $faker->imageUrl(640,400,'sports',true),
+                'photo' => $eventPhoto,
                 'privacy' => $faker->boolean,
                 'created_at' => date("Y-m-d H:i:s"),
                 'updated_at' => date("Y-m-d H:i:s"),
