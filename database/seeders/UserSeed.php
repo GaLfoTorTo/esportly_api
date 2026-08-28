@@ -146,7 +146,7 @@ class UserSeed extends Seeder
                     'event_id' => $e,
                     'user_id' => $i,
                     'roles' => json_encode($faker->randomElements($roles, $faker->numberBetween(1, count($roles)))),
-                    'status' => $faker->randomElement(['Avaliable','Doubt','Injured','Out']),
+                    'status' => $faker->randomElement(['Avaliable','Doubt','None','Out']),
                     'permissions' => null,
                     'created_at' => date("Y-m-d H:i:s"),
                     'updated_at' => date("Y-m-d H:i:s"),
