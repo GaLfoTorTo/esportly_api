@@ -86,7 +86,7 @@ class Event extends Model implements Auditable
 
     public function participants()
     {
-        return $this->hasMany(Participant::class);
+        return $this->hasMany(User::class);
     }
 
     public function rules()

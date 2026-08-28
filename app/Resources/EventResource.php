@@ -32,7 +32,7 @@ class EventResource extends JsonResource
             'address'       => $this->whenLoaded('address', fn() => AddressResource::make($this->address)),
             'gameConfig'    => $this->whenLoaded('gameConfig', fn() => GameConfigResource::make($this->gameConfig)),
             'avaliations'   => $this->whenLoaded('avaliations', fn() => AvaliationResource::collection($this->avaliations)),
-            'participants'  => $this->whenLoaded('participants', fn() => ParticipantResource::collection($this->participants)),
+            'participants'  => $this->whenLoaded('participants', fn() => UserstResource::collection($this->participants)),
             'rules'         => $this->whenLoaded('rules', fn() => RuleResource::collection($this->rules)),
             'news'          => $this->whenLoaded('news', fn() => NewsResource::collection($this->news)),
             'games'         => $this->whenLoaded('games', fn() => GameResource::collection($this->games)),
