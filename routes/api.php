@@ -45,7 +45,10 @@ Route::middleware(['auth:api'])->group(function () {
 
     // EVENTO
     Route::prefix('events')->group(function () {
-        Route::get('/',[EventController::class, 'events']);
+        //PARTICIPANTES
+        Route::prefix('/participants')->group(function () {
+            Route::get('/{id}',[EventController::class, 'participants']);
+        });
         // SALA (STREAM)
         Route::prefix('/room')->group(function () {
             Route::post('stream',[RoomController::class, 'stream']);

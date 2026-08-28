@@ -22,7 +22,7 @@ class EventService
     public function find(int $id)
     {
         //BUSCAR EVENTO A PARTIR DO ID
-        $event = Event::find($id);
+        $event = Event::with(['address', 'gameConfig', 'avaliations', 'participants.user', 'rules', 'news', 'games'])->find($id);
         return EventResource::make($event);
     }
     

@@ -8,7 +8,7 @@ use App\Enums\Privacy;
 use App\Resources\AddressResource;
 use App\Resources\GameConfigResource;
 use App\Resources\AvaliationResource;
-use App\Resources\UserResource;
+use App\Resources\ParticipantResource;
 use App\Resources\RuleResource;
 use App\Resources\NewsResource;
 use App\Resources\GameResource;
@@ -29,13 +29,13 @@ class EventResource extends JsonResource
             'collaborators' => $this->collaborators,
             'photo'         => $this->photo_url,
             'privacy'       => Privacy::fromBool((bool) $this->privacy)->value,
-            'address'       => $this->whenLoaded('address') ? AddressResource::make($this->address) : null,
-            'gameConfig'    => $this->whenLoaded('gameConfig') ? GameConfigResource::make($this->gameConfig) : null,
-            'avaliations'   => $this->whenLoaded('avaliations') ? AvaliationResource::collection($this->avaliations) : [],
-            'participants'  => $this->whenLoaded('participants') ? UserResource::collection($this->participants) : [],
-            'rules'         => $this->whenLoaded('rules') ? RuleResource::collection($this->rules) : [],
-            'news'          => $this->whenLoaded('news') ? NewsResource::collection($this->news) : [],
-            'games'         => $this->whenLoaded('games') ? GameResource::collection($this->games) : [],
+            'address'       => $this->whenLoaded('address', fn() => AddressResource::make($this->address)),
+            'gameConfig'    => $this->whenLoaded('gameConfig', fn() => GameConfigResource::make($this->gameConfig)),
+            'avaliations'   => $this->whenLoaded('avaliations', fn() => AvaliationResource::collection($this->avaliations)),
+            'participants'  => $this->whenLoaded('participants', fn() => ParticipantResource::collection($this->participants)),
+            'rules'         => $this->whenLoaded('rules', fn() => RuleResource::collection($this->rules)),
+            'news'          => $this->whenLoaded('news', fn() => NewsResource::collection($this->news)),
+            'games'         => $this->whenLoaded('games', fn() => GameResource::collection($this->games)),
             'createdAt'     => $this->created_at?->toIso8601String(),
             'updatedAt'     => $this->updated_at?->toIso8601String(),
             'deletedAt'     => $this->deleted_at?->toIso8601String(),

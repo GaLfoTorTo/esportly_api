@@ -19,6 +19,7 @@ class UserSeed extends Seeder
         $faker = Factory::create();
         $random = new \Random\Randomizer();
         $modalityes = ["Football", "Basketball", "Volleyball"];
+        $roles = ["Organizator", "Colaborator", "Refereer", "Player", "Manager"];
 
         function getModalities(){
             $faker = Factory::create();
@@ -121,7 +122,7 @@ class UserSeed extends Seeder
                 DB::table('participants')->insert([
                     'event_id' => $e,
                     'user_id' => $i,
-                    'roles' => json_encode($faker->randomElement(["Organizator", "Colaborator", "Refereer", "Player", "Manager"]), $faker->numberBetween(1, 5)),
+                    'roles' => json_encode($faker->randomElements($roles, $faker->numberBetween(1, count($roles)))),
                     'status' => $faker->randomElement(['Avaliable','Doubt','Injured','Out']),
                     'permissions' => null,
                     'created_at' => date("Y-m-d H:i:s"),
