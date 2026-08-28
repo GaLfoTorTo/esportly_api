@@ -674,21 +674,19 @@ class EventSeed extends Seeder
             return json_encode($arr);
         }
 
-        // Fotos de locais/quadras do Unsplash
-        $placePhotos = [
-            'https://images.unsplash.com/photo-1596460107916-430662021049?w=640&h=400&fit=crop&q=80',
-            'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=640&h=400&fit=crop&q=80',
-            'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=640&h=400&fit=crop&q=80',
-            'https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=640&h=400&fit=crop&q=80',
-            'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=640&h=400&fit=crop&q=80',
-            'https://images.unsplash.com/photo-1505666287802-931dc83948e9?w=640&h=400&fit=crop&q=80',
-            'https://images.unsplash.com/photo-1543351611-58f69d7c1781?w=640&h=400&fit=crop&q=80',
-            'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=640&h=400&fit=crop&q=80',
-        ];
-
         //FUNÇÃO PARA RESGATAR FOTOS DO LOCAL DO EVENTO
         function getPlacePhoto(){
-            global $placePhotos;
+            // Fotos de locais/quadras do Unsplash
+            $placePhotos = [
+                'https://images.unsplash.com/photo-1596460107916-430662021049?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1505666287802-931dc83948e9?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1543351611-58f69d7c1781?w=640&h=400&fit=crop&q=80',
+                'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=640&h=400&fit=crop&q=80',
+            ];
             $faker = Factory::create();
             if($faker->boolean){
                 $count = $faker->numberBetween(1, 4);
