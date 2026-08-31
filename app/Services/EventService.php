@@ -34,9 +34,20 @@ class EventService
     */
     public function get(?int $id=null)
     {
-        $events = Event::with(['address', 'gameConfig', 'avaliations', 'participants', 'rules', 'news', 'games'])
-                        ->when($id, fn($q) => $q->whereHas('participants', fn($q) => $q->where('user_id', $id)))
-                        ->get();
+        $query = Event::query()->when($id, fn($q) => $q->whereHas('users', fn($q) => $q->where('users.id', $id)));
+
+        $eventIds   = (clone $query)->pluck('id');
+        $modalities = (clone $query)->pluck('modality')->unique();
+
+        $events = $query->with([
+                            'address', 'gameConfig', 'avaliations', 'rules', 'news', 'games',
+                            'users' => fn($q) => $q->with([
+                                'player' => fn($p) => $p->with([
+                                    'ratings'   => fn($r) => $r->where('role', 'Player')->whereIn('event_id', $eventIds),
+                                    'positions' => fn($p) => $p->whereIn('positions.modality', $modalities),
+                                ]),
+                            ]),
+                        ])->get();
 
         return EventResource::collection($events);
     }

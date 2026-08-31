@@ -5,6 +5,7 @@ namespace App\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Resources\RatingResource;
+use App\Resources\PositionResource;
 
 class PlayerResource extends JsonResource
 {
@@ -15,9 +16,8 @@ class PlayerResource extends JsonResource
             'userId'       => $this->user_id,
             'bestSide'     => $this->best_side,
             'type'         => $this->type,
-            'mainPosition' => $this->main_position ?? null,
-            'positions'    => $this->positions ?? null,
-            'ratings'      => $this->whenLoaded('ratings') ? RatingResource::collection($this->ratings) : [],
+            'positions'    => $this->whenLoaded('positions', fn() => PositionResource::collection($this->positions)),
+            'ratings'      => $this->whenLoaded('ratings', fn() => RatingResource::collection($this->ratings)),
             'createdAt'    => $this->created_at?->toIso8601String(),
             'updatedAt'    => $this->updated_at?->toIso8601String(),
             'deletedAt'    => $this->deleted_at?->toIso8601String(),

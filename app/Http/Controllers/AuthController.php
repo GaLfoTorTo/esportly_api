@@ -52,9 +52,7 @@ class AuthController extends Controller
         try {
             $credentials = $request->only('user', 'password');
             $user = null;
-            $relations = ['player','manager','config','level', 'participants','achievements'];
-            $user = User::with($relations)
-                        ->where('email', $credentials['user'])
+            $user = User::where('email', $credentials['user'])
                         ->orWhere('user_name', $credentials['user'])
                         ->first();
             if (empty($user) || !Hash::check($credentials['password'], $user->password)) {
@@ -89,7 +87,7 @@ class AuthController extends Controller
                 ]);
                 throw new \Exception('Token Invalido');
             }
-            $user = User::with('player','manager','config','level','participants','achievements')->where('email', $payload['email'])->first();
+            $user = User::where('email', $payload['email'])->first();
             if(empty($user)){
                 $userService = new UserService();
                 $user = $userService->create($payload);

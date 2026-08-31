@@ -13,6 +13,7 @@ use App\Models\Room;
 use App\Models\GameConfig;
 use App\Models\User;
 use App\Models\Rule;
+use App\Models\Participant;
 
 class Event extends Model implements Auditable
 {
@@ -82,6 +83,13 @@ class Event extends Model implements Auditable
     public function avaliations()
     {
         return $this->hasMany(Avaliation::class);
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'participants')
+                    ->withPivot(['id', 'roles', 'permissions', 'status'])
+                    ->withTimestamps();
     }
 
     public function participants()

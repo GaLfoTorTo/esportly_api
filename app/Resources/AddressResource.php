@@ -22,7 +22,7 @@ class AddressResource extends JsonResource
             'zipCode'   => $this->zip_code,
             'latitude'  => (float) $this->latitude,
             'longitude' => (float) $this->longitude,
-            'photos'    => !empty($this->photos) ? json_decode($this->photos) : [],
+            'photos'    => $this->photos,
             'createdAt' => $this->created_at?->toIso8601String(),
             'updatedAt' => $this->updated_at?->toIso8601String(),
             'deletedAt' => $this->deleted_at?->toIso8601String(),

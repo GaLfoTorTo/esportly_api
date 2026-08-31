@@ -18,7 +18,6 @@ class Achievement extends Model implements Auditable
         'description',
         'points',
         'image',
-        'type',
         'rarity',
         'status',
     ];
@@ -27,8 +26,27 @@ class Achievement extends Model implements Auditable
         'description',
         'points',
         'image',
-        'type',
         'rarity',
         'status',
     ];
+
+    protected $casts = [
+        'status' => 'boolean'
+    ];
+
+    // ─── Relationships ────────────────────────────────────────────────────────
+
+    public function actions()
+    {
+        return $this->belongsToMany(Action::class, 'achievement_actions')
+                    ->withPivot('required_count')
+                    ->withTimestamps();
+    }
+
+    public function tasks()
+    {
+        return $this->belongsToMany(Task::class, 'achievement_tasks')
+                    ->withPivot('required_count')
+                    ->withTimestamps();
+    }
 }

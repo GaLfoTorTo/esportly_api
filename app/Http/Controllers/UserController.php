@@ -40,6 +40,42 @@ class UserController extends Controller
     }
 
     /**
+    * USER - BUSCAR DADOS DO USUARIO
+    *
+    * @param Request: Id do usuario
+    * @return Array: Dados do usuario (config, player, manager)
+    */
+    public function info(){
+        try {
+            $user = auth()->user();
+
+            $events     = \App\Models\Event::whereHas('users', fn($q) => $q->where('users.id', $user->id))->get(['id', 'modality']);
+            $eventIds   = $events->pluck('id');
+            $modalities = $events->pluck('modality')->unique();
+
+            $user->load([
+                'config',
+                'level',
+                'achievements',
+                'tasks',
+                'player' => fn($q) => $q->with([
+                    'positions' => fn($p) => $p->whereIn('positions.modality', $modalities),
+                    'ratings'   => fn($r) => $r->where('role', 'Player')->whereIn('event_id', $eventIds),
+                ]),
+                'manager' => fn($q) => $q->with([
+                    'escalations' => fn($e) => $e->whereIn('event_id', $eventIds)->latest(),
+                    'economies'   => fn($e) => $e->whereIn('event_id', $eventIds)->latest(),
+                ]),
+            ]);
+
+            return response()->json(['user' => \App\Resources\UserResource::make($user)], 200);
+        } catch (\Exception $e) {
+            Log::channel('register')->error("[Erro ao buscar info do usuário]", ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['message' => 'Houve um erro ao buscar as informações do usuário.'], 500);
+        }
+    }
+
+    /**
     * USER - EVENTOS DO USUARIO
     *
     * @param Request: Dados do Usuário, Dados de Modo Jogador e Dados

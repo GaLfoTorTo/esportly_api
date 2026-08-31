@@ -44,6 +44,8 @@ class LevelSeed extends Seeder
 
         $roman = ['I','II','III','IV','V'];
 
+        $color = ["green","cyan","blue","purple","red","orange","yellow","grey","white","dark"];
+
         $levels = [];
         $xpTotal = 0;
 
@@ -79,7 +81,7 @@ class LevelSeed extends Seeder
                 'points_min' => $xpRequired,
                 'points_max' => $xpTotal,
                 'image' => $tierImages[$tierName],
-                'color' => $faker->randomElement(["green","blue_500","red","yellow","orange","purple","dark","white"]),
+                'color' => $color[$romanIndex],
                 'created_at' => now(),
                 'updated_at' => now(),
             ];

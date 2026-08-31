@@ -15,12 +15,27 @@ class Action extends Model implements Auditable
     protected $table = 'actions';
     protected $fillable = [
         'title',
-        'score',
         'description',
+        'modality',
+        'score',
     ];
     protected $auditInclude = [
         'title',
-        'score',
         'description',
+        'modality',
+        'score',
     ];
+
+    protected $casts = [
+        'score' => 'float',
+    ];
+
+    // ─── Relationships ────────────────────────────────────────────────────────
+
+    public function achievements()
+    {
+        return $this->belongsToMany(Achievement::class, 'achievement_actions')
+                    ->withPivot('required_count')
+                    ->withTimestamps();
+    }
 }

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('description');
             $table->integer('points');
             $table->string('image');
-            $table->enum('type', ['single','progressive'])->default('single');
             $table->string('rarity')->default('Commun');
             $table->boolean('status')->default(true);
             $table->timestamps();

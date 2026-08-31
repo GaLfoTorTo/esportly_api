@@ -26,9 +26,16 @@ class EventController extends Controller
     * @return EventResource || []: Collection App\Models\Event
     */
     public function userEvents(Request $request){
-        $id = $request->input("user_id");
-        $events = $this->registerService->get($id);
-        return response()->json(['events' => $events], 200);
+        try{
+            $id = $request->input("user_id");
+            $events = $this->registerService->get($id);
+            return response()->json(['events' => $events], 200);
+        }catch(\Exception $e) {
+            //CAPTURAR ERRO E ENVIAR PARA O LOG
+            Log::channel('register')->error("[Erro ao buscar Eventos do Usuário][Eventos]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
+            //REDIRECIONAR PARA O FORMULÁRIO COM A MENSAGEM DE ERRO
+            throw new \Exception("Ocorreu um erro ao criar o evento. Por favor, tente novamente.");
+        }
     }
 
     /**
@@ -44,7 +51,7 @@ class EventController extends Controller
             return response()->json(['events' => $events], 201);
         }catch(\Exception $e) {
             //CAPTURAR ERRO E ENVIAR PARA O LOG
-            Log::channel('register')->error("[Erro de Registro][User][Registro]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
+            Log::channel('register')->error("[Erro ao buscar Eventos][Eventos]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
             //REDIRECIONAR PARA O FORMULÁRIO COM A MENSAGEM DE ERRO
             throw new \Exception("Ocorreu um erro ao criar o evento. Por favor, tente novamente.");
         }
@@ -63,7 +70,7 @@ class EventController extends Controller
             return response()->json(['evento' => $event], 201);
         }catch(\Exception $e) {
             //CAPTURAR ERRO E ENVIAR PARA O LOG
-            Log::channel('register')->error("[Erro de Registro][User][Registro]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
+            Log::channel('register')->error("[Erro ao registrar Evento][Eventos]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
             //REDIRECIONAR PARA O FORMULÁRIO COM A MENSAGEM DE ERRO
             throw new \Exception("Ocorreu um erro ao criar o evento. Por favor, tente novamente.");
         }

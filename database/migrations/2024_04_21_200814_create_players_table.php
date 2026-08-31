@@ -17,8 +17,6 @@ return new class extends Migration
             $table->enum('best_side',['Right','Left'])->default('Right');
             $table->integer('number')->nullable();
             $table->string('type')->nullable();
-            $table->json('main_position')->nullable();
-            $table->json('positions')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

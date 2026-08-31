@@ -41,6 +41,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::delete('/',[UserController::class, 'delete']);
         //EVENTOS
         Route::get('/events',[UserController::class, 'events']);
+        //INFO
+        Route::get('/info',[UserController::class, 'info']);
     });
 
     // EVENTO

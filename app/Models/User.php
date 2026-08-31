@@ -17,6 +17,7 @@ use App\Models\Player;
 use App\Models\Manager;
 use App\Models\Level;
 use App\Models\Participant;
+use App\Models\Task;
 use App\Models\UserConfig;
 
 class User extends Authenticatable implements Auditable
@@ -106,6 +107,14 @@ class User extends Authenticatable implements Auditable
     
     public function achievements()
     {
-        return $this->beLongsTo(Achievement::class, 'user_achievements', 'user_id', 'achievement_id');
+        return $this->belongsToMany(Achievement::class, 'user_achievements', 'user_id', 'achievement_id')
+                    ->withTimestamps();
+    }
+
+    public function tasks()
+    {
+        return $this->belongsToMany(Task::class, 'user_tasks')
+                    ->withPivot(['completed', 'completed_at'])
+                    ->withTimestamps();
     }
 }

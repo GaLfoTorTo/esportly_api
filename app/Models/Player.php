@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 use App\Models\User;
-use App\Http\Traits\UsuarioTrait;
+use App\Models\Position;
 
 class Player extends Model implements Auditable
 {
@@ -19,20 +19,14 @@ class Player extends Model implements Auditable
         "user_id",
         "best_side",
         "type",
-        'main_position',
-        'positions',
     ];
     protected $auditInclude = [
         "user_id",
         "best_side",
         "type",
-        'main_position',
-        'positions',
     ];
 
     protected $casts = [
-        'main_position' => 'array',
-        'positions'     => 'array',
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
         'deleted_at'    => 'datetime',
@@ -48,5 +42,10 @@ class Player extends Model implements Auditable
     public function ratings()
     {
         return $this->hasMany(Rating::class, 'user_id', 'user_id');
+    }
+    
+    public function positions()
+    {
+        return $this->belongsToMany(Position::class, 'player_positions', 'player_id', 'position_id')->withPivot('main');
     }
 }

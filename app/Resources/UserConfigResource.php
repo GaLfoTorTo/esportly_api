@@ -17,7 +17,7 @@ class UserConfigResource extends JsonResource
         return [
             'id'            => $this->id,
             'userId'        => $this->user_id,
-            'main_modality' => $this->main_modality,
+            'mainModality'  => $this->main_modality,
             'modalities'    => $this->modalities,
             'createdAt'     => $this->created_at?->toIso8601String(),
             'updatedAt'     => $this->updated_at?->toIso8601String(),

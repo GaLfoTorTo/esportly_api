@@ -9,6 +9,7 @@ use App\Resources\LevelResource;
 use App\Resources\ManagerResource;
 use App\Resources\PlayerResource;
 use App\Resources\ParticipantResource;
+use App\Resources\TaskResource;
 use App\Resources\UserConfigResource;
 use App\Enums\Privacy;
 
@@ -36,11 +37,18 @@ class UserResource extends JsonResource
             'level'        => $this->whenLoaded('level', fn() => LevelResource::make($this->level?->first()) ?? null),
             'player'       => $this->whenLoaded('player', fn() => PlayerResource::make($this->player) ?? null),
             'manager'      => $this->whenLoaded('manager', fn() => ManagerResource::make($this->manager) ?? null),
-            'participants' => $this->whenLoaded('participants', fn() => ParticipantResource::collection($this->participants) ?? []),
+            'participants' => $this->setParticipant(),
             'achievements' => $this->whenLoaded('achievements', fn() => AchievementResource::collection($this->achievements) ?? []),
+            'tasks'        => $this->whenLoaded('tasks', fn() => TaskResource::collection($this->tasks)),
             'createdAt'    => $this->created_at?->toIso8601String(),
             'updatedAt'    => $this->updated_at?->toIso8601String(),
             'deletedAt'    => $this->deleted_at?->toIso8601String(),
         ];
+    }
+
+    private function setParticipant(){
+        return $this->pivot
+            ? [ParticipantResource::make($this->pivot)]
+            : $this->whenLoaded('participants', fn() => ParticipantResource::collection($this->participants));
     }
 }

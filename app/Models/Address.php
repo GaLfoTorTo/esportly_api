@@ -41,4 +41,20 @@ class Address extends Model implements Auditable
         'longitude',
         'photos',
     ];
+
+    protected $casts = [
+        'latitude'   => 'float',
+        'longitude'  => 'float',
+        'photos'     => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
+
+    // ─── Relationships ────────────────────────────────────────────────────────
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
+    }
 }

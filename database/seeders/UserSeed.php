@@ -55,14 +55,20 @@ class UserSeed extends Seeder
             'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&h=200&fit=crop&q=80',
         ];
 
+        // Tarefas iniciais criadas para todo novo usuário ao cadastro
+        $initialTaskIds = DB::table('tasks')
+            ->whereIn('category', ['onboarding', 'player', 'manager', 'participation', 'organization', 'social'])
+            ->pluck('id');
+
+        $p = 0;
+        $m = 0;
+
         for($i = 1; $i <= 100; $i ++){
 
             //GERAR IDS DO EVENTO
             $events = $faker->numberBetween(1, 10);
             $isPlayer = $faker->boolean;
             $isManager = $faker->boolean;
-            $p = 0;
-            $m = 0;
 
             //CRIAR USUARIO
             DB::table("users")->insert([
@@ -91,6 +97,16 @@ class UserSeed extends Seeder
                 "level_id" => 1,
                 "points" => 0,
             ]);
+            //CRIAR TASKS INICIAIS DO USUARIO
+            $userTaskRows = $initialTaskIds->map(fn ($taskId) => [
+                'user_id'      => $i,
+                'task_id'      => $taskId,
+                'completed'    => false,
+                'completed_at' => null,
+                'created_at'   => date("Y-m-d H:i:s"),
+                'updated_at'   => date("Y-m-d H:i:s"),
+            ])->values()->all();
+            DB::table('user_tasks')->insert($userTaskRows);
             
             //GERAR DADOS DE PLAYER DO USUARIO
             if($isPlayer){
