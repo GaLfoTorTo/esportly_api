@@ -48,7 +48,7 @@ class EventService
                                 ]),
                             ]),
                         ])->get();
-
+        
         return EventResource::collection($events);
     }
 

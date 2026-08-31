@@ -39,7 +39,7 @@ class EventResource extends JsonResource
 
                 $this->users->each(function ($user) use ($eventId, $modality) {
                     if ($player = $user->player) {
-                        $player->setRelation('ratings',   $player->ratings->where('event_id', $eventId)->values());
+                        $player->setRelation('ratings',   $player->ratings->where('event_id', $eventId)->values())->latest();
                         $player->setRelation('positions', $player->positions->where('modality', $modality)->values());
                     }
                 });

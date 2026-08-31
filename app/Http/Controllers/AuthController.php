@@ -31,14 +31,14 @@ class AuthController extends Controller
                         $user = $this->platform($request);
                         break;
                 }
-                if (empty($user)) throw new \Exception('Falha ao autenticar: usuário inválido ou não retornado pelas funções de login');
+                if (empty($user)) throw new \Exception('Falha ao autenticar: usuário inválido');
                 $token = $user->createToken($user->uuid)->plainTextToken;
                 $user = UserResource::make($user);
                 return response()->json(['user' => $user, 'token' => $token], 200);
             }
         }catch(\Exception $e) {
             Log::channel('auth')->error("[Erro de autenticação][Usuario][Auth]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
-            return response()->json(['message' => 'Houve um erro ao efetura login. Tente novamente mais tarde!'], 500);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 

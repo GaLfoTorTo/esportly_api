@@ -17,7 +17,6 @@ class UserSeed extends Seeder
     {
 
         $faker = Factory::create();
-        $random = new \Random\Randomizer();
         $modalityes = ["Football", "Basketball", "Volleyball"];
         $roles = ["Organizator", "Colaborator", "Refereer", "Player", "Manager"];
 
@@ -77,7 +76,7 @@ class UserSeed extends Seeder
                 "last_name" => $faker->lastName,
                 "user_name" => $faker->name,
                 "email" => $faker->email,
-                "password" => bcrypt("futezada@123"),
+                "password" => bcrypt("esportly@123"),
                 "born_date" => $faker->dateTimeBetween("-50 years", "-18 years")->format("Y-m-d"),
                 "phone" => $faker->phoneNumber,
                 "photo" => $userPhotos[array_rand($userPhotos)],
@@ -122,14 +121,27 @@ class UserSeed extends Seeder
                     'updated_at' => date("Y-m-d H:i:s"),
                 ]);
                 $player = DB::table('players')->where('id', $p)->first();
-                if($isPlayer && !empty($player)){
-                    DB::table('player_positions')->insert([
-                        "player_id" => $p,
-                        "position_id" => $faker->numberBetween(1, 5),
-                        "main" => $faker->boolean,
-                        'created_at' => date("Y-m-d H:i:s"),
-                        'updated_at' => date("Y-m-d H:i:s"),
-                    ]);
+                if(!empty($player)){
+                    $modalityPositionRanges = [
+                        'Football'   => [1, 5],
+                        'Volleyball' => [6, 10],
+                        'Basketball' => [11, 15],
+                    ];
+                    foreach($modalityPositionRanges as $item){
+                        $qtd = $faker->numberBetween($item[0], $item[1]);
+                        for($pos = $item[0]; $pos <= $qtd; $pos++){
+                            $main = $pos <= $item[0];
+                            $playerModality = $faker->randomElement($modalityes);
+                            [$minPos, $maxPos] = $modalityPositionRanges[$playerModality];
+                            DB::table('player_positions')->insert([
+                                "player_id" => $p,
+                                "position_id" => $pos,
+                                "main" => $main,
+                                'created_at' => date("Y-m-d H:i:s"),
+                                'updated_at' => date("Y-m-d H:i:s"),
+                            ]);
+                        }
+                    }
                 }
             }
             
@@ -156,7 +168,7 @@ class UserSeed extends Seeder
                 ]);
             }
 
-            for ($e = 1; $e <= $events ; $e++) { 
+            for ($e = 1; $e <= $events ; $e++) {
                 //GERAR PARTICIPANT (EVENTS)
                 DB::table('participants')->insert([
                     'event_id' => $e,
@@ -168,21 +180,39 @@ class UserSeed extends Seeder
                     'updated_at' => date("Y-m-d H:i:s"),
                 ]);
 
-                $manager = DB::table('managers')->where('id', $m)->first();
-                if($isManager && !empty($manager)) {
-                    //GERAR RATING (PLAYER)
+                //GERAR RATING DE PLAYER (SE USUARIO FOR PLAYER)
+                if($isPlayer){
                     DB::table('ratings')->insert([
                         'user_id' => $i,
                         'event_id' => $e,
-                        'role' => $faker->randomElement([ "Player", "Manager", "Refereer",]),
+                        'role' => 'Player',
                         'points' => $faker->randomFloat(2, 0, 99),
                         'avarage' => $faker->randomFloat(2, 0, 99),
                         'valuation' => $faker->randomFloat(2, 0, 99),
                         'price' => $faker->randomFloat(2, 0, 99),
-                        'games' => $faker->randomFloat(2, 0, 99),
+                        'games' => $faker->numberBetween(0, 50),
                         'created_at' => date("Y-m-d H:i:s"),
                         'updated_at' => date("Y-m-d H:i:s"),
                     ]);
+                }
+                //GERAR RATING DE MANAGER (SE USUARIO FOR MANAGER)
+                if($isManager){
+                    DB::table('ratings')->insert([
+                        'user_id' => $i,
+                        'event_id' => $e,
+                        'role' => 'Manager',
+                        'points' => $faker->randomFloat(2, 0, 99),
+                        'avarage' => $faker->randomFloat(2, 0, 99),
+                        'valuation' => $faker->randomFloat(2, 0, 99),
+                        'price' => $faker->randomFloat(2, 0, 99),
+                        'games' => $faker->numberBetween(0, 50),
+                        'created_at' => date("Y-m-d H:i:s"),
+                        'updated_at' => date("Y-m-d H:i:s"),
+                    ]);
+                }
+
+                $manager = DB::table('managers')->where('id', $m)->first();
+                if($isManager && !empty($manager)) {
                     //GERAR ECONOMY (MANAGER)
                     DB::table('economies')->insert([
                         'manager_id' => $manager->id,
