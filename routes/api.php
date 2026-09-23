@@ -53,8 +53,6 @@ Route::middleware(['auth:api'])->group(function () {
         //EVENTO ESPECIFICOS (UUID)
         Route::prefix('{uuid}')->group(function () {
             Route::get('/',[EventController::class, 'event']);
-            //PARTICIPANTES
-            Route::get('/participants',[EventController::class, 'participants']);
             //REGRAS
             Route::get('/rules',[EventController::class, 'rules']);
             //RANKINGS
@@ -63,11 +61,13 @@ Route::middleware(['auth:api'])->group(function () {
             Route::get('/news',[EventController::class, 'news']);
             //PARTIDAS
             Route::get('/games',[EventController::class, 'games']);
+            //PARTICIPANTES
+            Route::get('/participants',[EventController::class, 'participants']);
             //SALA AO VIVO (STREAM)
             Route::prefix('/room')->group(function () {
                 Route::post('stream',[RoomController::class, 'stream']);
-                Route::post('join',  [RoomController::class, 'join']);
-                Route::post('exit',  [RoomController::class, 'exit']);
+                Route::get('join',  [RoomController::class, 'join']);
+                Route::get('exit',  [RoomController::class, 'exit']);
             });
         });
     });

@@ -5,9 +5,11 @@ namespace App\Services;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Fluent;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\Event;
 use App\Models\Game;
+use App\Models\Team;
 use App\Resources\GameResource;
 
 class GameService
@@ -55,6 +57,7 @@ class GameService
                 ->get();
 
             if ($games->isNotEmpty()) {
+                $games = $this->setTeams($games, $event->gameConfig);
                 return GameResource::collection($games);
             }
 
@@ -67,6 +70,38 @@ class GameService
             Log::channel('events')->error("[Erro ao buscar partidas do evento][Partidas][GameService]", ['[event_id]' => $event->id, '[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
             throw new \Exception("Ocorreu um erro ao buscar as partidas do evento. Por favor, tente novamente.");
         }
+    }
+
+    /**
+     * PARTIDAS - GERAR TIMES NAS PARTIDAS
+     *
+     * @param Collection: Lista de partidas
+     * @return Collection: Lista de partidas com equipes configuradas
+     */
+    private function setTeams(\Illuminate\Database\Eloquent\Collection $games): \Illuminate\Database\Eloquent\Collection
+    {
+        $allGames = $games->filter(fn($g) => $g->teams->isEmpty());
+
+        if ($allGames->isEmpty()) {
+            return $games;
+        }
+
+        foreach ($allGames as $game) {
+            $gameTeams = collect();
+            for($i = 1; $i <= 2; $i++) {
+                $gameTeams->push(
+                    new Team([
+                        'uuid'   => (string) Str::uuid(),
+                        'name'   => "Equipe $i",
+                        'emblem' => "emblema_". random_int(1, 8),
+                        'game_id' => $game->id,
+                    ])
+                );
+            }
+            $game->setRelation('teams', $gameTeams);
+        }
+
+        return $games;
     }
 
     /**
@@ -85,14 +120,20 @@ class GameService
                 return [];
             }
 
-            $start    = Carbon::parse($event->start_time);
-            $end      = Carbon::parse($event->end_time);
-            $current  = $start->copy();
-            $number   = 1;
-            $preview  = [];
+            $start        = Carbon::parse($event->start_time);
+            $end          = Carbon::parse($event->end_time);
+            $current      = $start->copy();
+            $number       = 1;
+            $preview      = [];
 
             while ($current->copy()->addMinutes($config->duration)->lte($end)) {
                 $slotEnd = $current->copy()->addMinutes($config->duration);
+
+                $teams = array_map(fn($p) => [
+                    'uuid'   => (string) Str::uuid(),
+                    'name'   => "Equipe $p",
+                    'emblem' => "emblema_". random_int(1, 8),
+                ], [1, 2]);
 
                 $preview[] = new Fluent([
                     'id'         => null,
@@ -105,7 +146,7 @@ class GameService
                     'end_time'   => $slotEnd->format('H:i:s'),
                     'status'     => 'scheduled',
                     'result'     => null,
-                    'teams'      => [],
+                    'teams'      => $teams,
                     'created_at' => null,
                     'updated_at' => null,
                     'deleted_at' => null,

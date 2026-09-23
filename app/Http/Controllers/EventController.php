@@ -44,6 +44,26 @@ class EventController extends Controller
     /**
     * EVENTOS - BUSCAR EVENTOS
     *
+    * @param Request: UUID do Evento
+    * @return EventResource Instance App\Models\Event
+    */
+    public function event(Request $request){
+        try {
+            //BUSCAR EVENTOS
+            $uuid  = $request->segment(3);
+            $event = $this->registerService->find($uuid);
+            return response()->json(['event' => $event], 200);
+        }catch(\Exception $e) {
+            //CAPTURAR ERRO E ENVIAR PARA O LOG
+            Log::channel('register')->error("[Erro ao buscar Eventos][Eventos]", ['[message]' => $e->getMessage(), '[error]' => $e->getTraceAsString()]);
+            //REDIRECIONAR PARA O FORMULÁRIO COM A MENSAGEM DE ERRO
+            throw new \Exception("Ocorreu um erro ao buscar so eventos. Por favor, tente novamente.");
+        }
+    }
+
+    /**
+    * EVENTOS - BUSCAR EVENTOS
+    *
     * @param Request: UUID do Evento || ID do Usuário;
     * @return EventResource || []: Collection App\Models\Event
     */

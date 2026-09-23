@@ -20,10 +20,26 @@ class EventService
     * @param int: Id do evento
     * @return EventResource - App\Models\Event: Evento ;
     */
-    public function find(int $id)
+    public function find(string $uuid)
     {
-        //BUSCAR EVENTO A PARTIR DO ID
-        $event = Event::with(['address', 'gameConfig', 'avaliations', 'participants.user', 'rules', 'news', 'games'])->find($id);
+        $query      = Event::query()->where('uuid', $uuid);
+        $eventIds   = (clone $query)->pluck('id');
+        $modalities = (clone $query)->pluck('modality')->unique();
+
+        $event = $query->with([
+                        'address', 'gameConfig', 'avaliations', 'rules', 'news', 'games',
+                        'users' => fn($q) => $q->with([
+                            'manager'  => fn($p) => $p->with([
+                                'ratings'   => fn($r) => $r->where('role', 'Manager'),
+                                'economies' => fn($e) => $e->whereIn('event_id', $eventIds),
+                            ]),
+                            'player'  => fn($p) => $p->with([
+                                'ratings'   => fn($r) => $r->where('role', 'Player'),
+                                'positions' => fn($p) => $p->whereIn('positions.modality', $modalities),
+                            ]),
+                        ]),
+                    ])->first();
+
         return EventResource::make($event);
     }
     

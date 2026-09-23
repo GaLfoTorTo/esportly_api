@@ -8,16 +8,17 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Event;
 
 class RoomEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct(/* public readonly Event $event */) {}
+    public function __construct(public readonly Event $event) {}
 
     public function broadcastOn(): array
     {
-        return [new Channel("event.event-123")];
+        return [new Channel("event.{$this->event->uuid}")];
     }
 
     public function broadcastAs(): string
@@ -29,8 +30,8 @@ class RoomEvent implements ShouldBroadcast
     {
         return [
             'type' => 'room',
-            'status' => 'Aberta',//$this->event->room->status,
-            'message' => 'Sala aberta',//$this->event->room->status === 'open' ? 'Sala aberta.' : 'Sala fechada.',
+            'status' => $this->event->room->status,
+            'message' => $this->event->room->status === 'open' ? 'Sala aberta.' : 'Sala fechada.',
         ];
     }
 }

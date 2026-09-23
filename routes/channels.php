@@ -18,9 +18,8 @@ use App\Models\Event;
 Broadcast::channel('event.{uuid}', function (): bool 
 {
     //RESGATAR EVENTO
-    /* $event = Event::with('room')->where('uuid', $uuid)->first();
-    
+    $event = Event::with('room')->where('uuid', $uuid)->first();
     //VERIFICAR SE EVENTO ESTA ONLINE
-    if (!$event && $event->room->status) return false; */
+    if (!$event && $event->room->status) return false;
     return true;
 });

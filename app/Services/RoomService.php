@@ -6,48 +6,77 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Event;
 use App\Models\Room;
 use App\Events\RoomEvent;
+use App\Services\FcmService;
 
 class RoomService
 {
-    public function __construct() {}
+    public function __construct(private FcmService $fcm) {}
 
-    //FUNÇÃO PARA ABRIR ENTRAR NO EVENTO
+    /**
+     * ROOM - ENTRADA NA SALA DO EVENTO
+     * 
+     * @param String: Uuid evento;
+     * @return void:
+    */
     public function join(string $uuid): Room
     {
         //DISPARAR EVENTO DE ENTRADA DE PARTICIPANTE NA SALA
     }
 
-    //FUNÇÃO PARA ABRIR SALA DO EVENTO
+    /**
+     * ROOM - SAIR DA SALA DO EVENTO
+     * 
+     * @param String: Uuid evento;
+     * @return void:
+    */
     public function exit(string $uuid): Room
     {
         //DISPARAR EVENTO DE SAIDA DE PARTICIPANTE NA SALA
     }
 
-    //FUNÇÃO PARA ABRIR SALA DO EVENTO
-    public function strem(string $uuid, string $stauts): bool
+    /**
+     * ROOM - INICIAR SALA DO EVENTO
+     * 
+     * @param String: Uuid evento;
+     * @param String: STATUS da sala evento;
+     * @return void:
+    */
+    public function stream(string $uuid, string $status): bool
     {
         try {
             //BUSCAR EVENTO
-            $event = Event::with('room')->where('uuid', $uuid)->firstOrFail();
-            //ATUALIZAR STATUS DA SALA
-            $event->room->update([
-                'event_id'  => $event->id,
-                'status'    => $status,
-                'opened_at' => now(),
-            ]);
-            //DISPARAR EVENTO DE FECHAMENTO DE SALA
+            $event = Event::where('uuid', $uuid)->firstOrFail();
+            //CRIAR OU ATUALIZAR STATUS DA SALA
+            $room = Room::updateOrCreate(
+                [
+                    'event_id' => $event->id
+                ],
+                [
+                    'event_id'  => $event->id,
+                    'status'    => $status,
+                    'opened_at' => now(),
+                ]
+            );
+            //CARREGAR SALA NO EVENT
+            $event->load('room');
+            //DISPARAR EVENTO DE ABERTURA OU FECHAMENTO DE SALA
             broadcast(new RoomEvent($event));
             //DISPARAR NOTIFICAÇÃO DE ABERTURA DE SALA
             $this->notify($event);
             return true;
         } catch (\Exception $e) {
             //REGISTAR ERRO NO LOG
-            Log::error("[Erro ao iniciar a sala][Evento][uuid=$uuid]", ['error' => $e->getTraceAsString()]);
+            Log::error("[Erro ao iniciar a sala][Evento][uuid=$uuid]", ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
             return false;
         }
     }
 
-    //FUNÇÃO PARA NOTIFICAÇÃO DE ABERTURA DE SALA
+    /**
+     * ROOM - NOTIFICAÇÃO DE ENTRADA NA SALA DO EVENTO
+     * 
+     * @param Event: evento;
+     * @return void:
+    */
     private function notify(Event $event): void
     {
         //DEFINIR TOPICO DO CANAL DE EVENTO
@@ -55,7 +84,7 @@ class RoomService
         //DISPARAR NOTIFICAÇÃO
         $this->fcm->sendToTopic(
             topic: $topic,
-            title: "🟢 {$event->title} — Dia de Jogo!",
+            title: "{$event->title} — Dia de Jogo!",
             body:  "Pelada ta no ar! Entre na sala para acompanhar tudo ao vivo.",
             data:  [
                 'type'       => 'room_opened',
