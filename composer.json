@@ -15,6 +15,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
         "owen-it/laravel-auditing": "^13.5",
+        "predis/predis": "^3.7",
         "tinymce/tinymce": "^7.6"
     },
     "require-dev": {

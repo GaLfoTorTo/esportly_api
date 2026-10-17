@@ -52,7 +52,7 @@ class FcmService
                 ->post($url, $body);
 
             if ($response->failed()) {
-                Log::channel('broadcast')->error('[FCM] Falha no envio', [
+                Log::channel('events')->error('[FCM] Falha no envio', [
                     'status' => $response->status(),
                     'body'   => $response->json(),
                 ]);
@@ -62,9 +62,7 @@ class FcmService
             return true;
 
         } catch (\Throwable $e) {
-            Log::channel('broadcast')->error('[FCM] Exceção', [
-                'message' => $e->getMessage(),
-            ]);
+            Log::channel('events')->error('[FCM] Exceção', ['message' => $e->getMessage()]);
             return false;
         }
     }

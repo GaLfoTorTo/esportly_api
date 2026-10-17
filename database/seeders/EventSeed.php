@@ -44,7 +44,7 @@ class EventSeed extends Seeder
                         "extraTime" => $faker->numberBetween(0, 10),
                         "goalLimit" => $faker->numberBetween(0, 10),
                     ];
-                case 'Voleyball':
+                case 'Volleyball':
                     return [
                         "sets" => $faker->numberBetween(0, 3),
                         "hasPointsLimit" => $faker->boolean,

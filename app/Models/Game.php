@@ -43,7 +43,7 @@ class Game extends Model implements Auditable
     protected $casts = [
         'number'     => 'integer',
         'duration'   => 'integer',
-        'date' => 'date',
+        'date'       => 'date',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',

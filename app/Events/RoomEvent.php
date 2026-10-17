@@ -14,7 +14,10 @@ class RoomEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct(public readonly Event $event) {}
+    public function __construct(
+        public readonly Event $event,
+        public readonly array $participants = [],
+    ) {}
 
     public function broadcastOn(): array
     {
@@ -29,9 +32,9 @@ class RoomEvent implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
-            'type' => 'room',
-            'status' => $this->event->room->status,
-            'message' => $this->event->room->status === 'open' ? 'Sala aberta.' : 'Sala fechada.',
+            'type'         => 'room',
+            'status'       => $this->event->room->status,
+            'participants' => $this->participants,
         ];
     }
 }

@@ -65,9 +65,10 @@ Route::middleware(['auth:api'])->group(function () {
             Route::get('/participants',[EventController::class, 'participants']);
             //SALA AO VIVO (STREAM)
             Route::prefix('/room')->group(function () {
-                Route::post('stream',[RoomController::class, 'stream']);
-                Route::get('join',  [RoomController::class, 'join']);
-                Route::get('exit',  [RoomController::class, 'exit']);
+                Route::post('open',[RoomController::class, 'stream']);
+                Route::post('close',[RoomController::class, 'stream']);
+                Route::post('join',  [RoomController::class, 'room']);
+                Route::post('exit',  [RoomController::class, 'room']);
             });
         });
     });

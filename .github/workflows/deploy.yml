@@ -121,6 +121,7 @@ jobs:
             # ── 4. DEPENDÊNCIAS PHP ─────────────────────────────────────────
             echo ""
             echo "▶ [4/9] Instalando dependências PHP (composer)..."
+            rm -rf vendor
             composer install \
               --no-dev \
               --no-interaction \
